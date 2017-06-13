@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//src/rmi/DataRemoteObject.java=UTF-8
+encoding//src/rmi/RemoteHelper.java=UTF-8
+encoding//src/runner/ServerRunner.java=UTF-8
+encoding//src/service/ExecuteService.java=UTF-8
+encoding//src/service/IOService.java=UTF-8
+encoding//src/service/UserService.java=UTF-8
+encoding//src/serviceImpl/ExecuteServiceImpl.java=UTF-8
+encoding//src/serviceImpl/IOServiceImpl.java=UTF-8
+encoding//src/serviceImpl/UserServiceImpl.java=UTF-8

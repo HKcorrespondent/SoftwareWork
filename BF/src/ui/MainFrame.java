@@ -41,7 +41,9 @@ public class MainFrame extends JFrame {
 
 		newMenuItem.addActionListener(new MenuItemActionListener());
 		openMenuItem.addActionListener(new MenuItemActionListener());
+
 		saveMenuItem.addActionListener(new SaveActionListener());
+	
 		runMenuItem.addActionListener(new MenuItemActionListener());
 
 		textArea = new JTextArea();
@@ -67,9 +69,14 @@ public class MainFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
+			
+		
+			
+			
 			if (cmd.equals("Open")) {
 				textArea.setText("Open");
 			} else if (cmd.equals("Save")) {
+				
 				textArea.setText("Save");
 			} else if (cmd.equals("Run")) {
 				resultLabel.setText("Hello, result");
@@ -78,9 +85,12 @@ public class MainFrame extends JFrame {
 	}
 
 	class SaveActionListener implements ActionListener {
-
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			resultLabel.setText("Save");
+			
 			String code = textArea.getText();
 			try {
 				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
