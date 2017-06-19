@@ -20,8 +20,9 @@ import rmi.RemoteHelper;
 public class MainFrame extends JFrame {
 	private JTextArea textArea;
 	private JLabel resultLabel;
-
-	public MainFrame() {
+	private String username;
+	public MainFrame(String username) {
+		this.username=username;
 		// 创建窗体
 		JFrame frame = new JFrame("BF Client");
 		frame.setLayout(new BorderLayout());

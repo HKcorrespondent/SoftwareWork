@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 import rmi.RemoteHelper;
 import service.IOService;
+import ui.LoginFrame;
 import ui.MainFrame;
 
 public class ClientRunner {
@@ -32,7 +33,7 @@ public class ClientRunner {
 	}
 	
 	private void initGUI() {
-		MainFrame mainFrame = new MainFrame();
+		LoginFrame loginFrame = new LoginFrame();
 	}
 	
 	public void test(){
