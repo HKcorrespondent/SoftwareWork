@@ -129,7 +129,7 @@ public class LoginFrame extends JFrame{
 					disposeTheLoginFrame();
 					new MainFrame(trueUsername);
 				}else{
-					showLabel.setText("用户名或密码错误");
+					showLabel.setText("用户名或密码错误或已经登录");
 				}
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -138,7 +138,18 @@ public class LoginFrame extends JFrame{
 		}
 		
 	}
-	
+	private String changePassword(String MD5){
+		String ret="";
+		for(int i=0;i<MD5.length();i++){
+			char c=MD5.charAt(i);
+			ret=ret+(char)('A'+c%26);
+		}
+		
+		
+		
+		return ret;
+		
+	}
 	
 	private String encode(char[] c){
 		MessageDigest md5 = null;
@@ -157,12 +168,18 @@ public class LoginFrame extends JFrame{
 		String retString = null;
 		try {
 			retString = new String(md5.digest(String.valueOf(c).getBytes()),"UTF-8");
+			
+			
+			
+			
+			
+			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return retString;
+		return changePassword(retString);
 	}
 	public boolean judgeUsernameAndPasswordLegalOrNot(String username,char[] password){
 		if(username.length()<5||username.length()>15){

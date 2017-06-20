@@ -14,7 +14,12 @@ public class ExecuteServiceImpl implements ExecuteService {
 	@Override
 	public String execute(String code, String param) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		return "成功运行了! code:"+"code";
+		
+		
+		
+		
+		
 	}
 
 }

@@ -3,6 +3,7 @@ package serviceImpl;
 import java.io.File;
 import java.rmi.RemoteException;
 
+import fileOpeation.IOFileOpeation;
 import fileOpeation.UserFileOperation;
 import service.UserService;
 
@@ -18,14 +19,14 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public boolean login(String username, String password) throws RemoteException {
-		return UserFileOperation.login();
+		return UserFileOperation.login(username,password);
 		
 		
 	}
 
 	@Override
 	public boolean logout(String username) throws RemoteException {
-		
+		UserFileOperation.loginUser.remove(username);
 		
 		return true;
 	}
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService{
 		
 		
 		
-		if(UserFileOperation.signup()){
+		if(UserFileOperation.signup(username,password)){
 			return "注册成功!";
 		}else{
 			return "该用户名已存在!";
