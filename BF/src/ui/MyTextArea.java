@@ -5,8 +5,9 @@ import javax.swing.JTextArea;
 
 public class MyTextArea extends JScrollPane{
 	JTextArea textArea =new JTextArea();
-	public MyTextArea(){
-		
+	String title ="";
+	public MyTextArea(String title){
+		this.title=title;
 		setViewportView(textArea);
 		
 		
@@ -18,5 +19,8 @@ public class MyTextArea extends JScrollPane{
 	
 	public JTextArea getJTextArea(){
 		return textArea;
+	}
+	public String getTitle(){
+		return title;
 	}
 }

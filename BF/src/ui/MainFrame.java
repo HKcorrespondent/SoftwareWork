@@ -72,15 +72,15 @@ public class MainFrame extends JFrame {
 		menuInit();
 		
 		tabbedPanel = new JTabbedPane();
-		outputArea = new MyTextArea();
+		outputArea = new MyTextArea("outputArea");
 		outputArea.getJTextArea().setLineWrap(true);
 		outputArea.getJTextArea().setText("output");
 		outputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
-		inputArea = new MyTextArea();
+		inputArea = new MyTextArea("outputArea");
 		inputArea.getJTextArea().setLineWrap(true);
 		inputArea.getJTextArea().setText("input");
 		inputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
-		MyTextArea  textArea = new MyTextArea();
+		MyTextArea  textArea = new MyTextArea("new.bf");
 		textArea.getJTextArea().setLineWrap(true);
 		
 		
@@ -198,7 +198,8 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-		frame.setSize(500, 400);
+		frame.setSize(800, 600);
+//		setSize(800, 600);
 		frame.setLocation(400, 200);
 		frame.setVisible(true);
 	}
@@ -272,20 +273,21 @@ public class MainFrame extends JFrame {
 			
 			return "该文件已存在!";
 		}else{
+			//服务器端先创建文件
 			try {
 				RemoteHelper.getInstance().getIOService().writeFile("",username , filename+"."+fileType);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			//服务器端先创建文件
-			
-			tabbedPanel.addTab( filename+"."+fileType, new JTextArea());
-			
-			
-			
 			//本地创建
+			
+			
+			tabbedPanel.add( filename+"."+fileType, new MyTextArea(filename+"."+fileType));
+			
+			
+			
+			
 			return "成功创建!";
 		}
 		
@@ -360,12 +362,14 @@ public class MainFrame extends JFrame {
 				
 			}else if (cmd.equals("Open")) {
 //				textArea.setText("Open");
-				 ArrayList<String> list = MainFrame.this.getFileList();
+//				 ArrayList<String> list = MainFrame.this.getFileList();
 				
 				
 				
 				
 				FileChooser fc= new FileChooser(username, MainFrame.this);
+				fc.setLocationRelativeTo(MainFrame.this.tabbedPanel);
+//				fc.setSize(200,200);
 				fc.setVisible(true);
 				
 				
@@ -432,7 +436,7 @@ public class MainFrame extends JFrame {
 	    	super(frame, "newFile", true);
 	    	this.frame=frame;
 	    	
-	    
+	    	setBounds(120,120,100,100);
 	    	setLayout(new GridLayout(2, 2));
 	    	JButton bf= new JButton("BF文件");
 	    	JButton ook = new JButton("Ook!文件");
@@ -445,7 +449,7 @@ public class MainFrame extends JFrame {
 	    	this.add(ook);
 	    	bf.addActionListener(this);
 	    	ook.addActionListener(this);
-	    	setBounds(120,120,100,100);
+	    	
 	    	
 	    	
 	    	
