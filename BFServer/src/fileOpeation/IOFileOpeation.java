@@ -8,17 +8,71 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 import java.util.Scanner;
 
 import javafx.beans.value.WritableBooleanValue;
 
+
+
+
 public class IOFileOpeation {
 	private static String dataAddress = UserFileOperation.dataAddress;
-	public static boolean  writeFile(String file, String userId, String fileName){
+	private final static String splitFileSymbol = "_";
+	private final static String splitFileInformation = "@";
+	public static boolean  writeFile(String codeGetIn, String userId, String fileName){
 		File file1 = new  File(dataAddress+"\\"+userId+"\\"+fileName);
+		String finalString ="";
+		if(!file1.exists()){
+			finalString=firstSave();
+		}else{
+			String readString =readFile(userId, fileName);
+			String[] fileArgs=readString.split(splitFileSymbol);
+			System.out.println(fileArgs.length);
+			if(fileArgs.length>=3){
+				System.out.println(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
+				int saveVision=Integer.parseInt(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
+				
+				System.out.println(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
+				System.out.println(saveVision+"!!");
+				
+				String newfileStrng=newAddFile(codeGetIn,saveVision+1);
+				for(int i=1;i<fileArgs.length;i++){
+					finalString=finalString+fileArgs[i]+splitFileSymbol;
+				}
+				finalString=finalString+newfileStrng;
+				
+				
+			}else{
+				int saveVision=Integer.parseInt(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
+				
+				System.out.println(fileArgs[fileArgs.length-1]);
+				System.out.println(saveVision+"!!");
+				
+				String newfileStrng=newAddFile(codeGetIn,saveVision+1);
+				for(int i=0;i<fileArgs.length;i++){
+					finalString=finalString+fileArgs[i]+splitFileSymbol;
+				}
+				finalString=finalString+newfileStrng;
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		try {
 			FileWriter fw = new FileWriter(file1, false);
-			fw.write(file);
+			fw.write(finalString);
 			fw.flush();
 			fw.close();
 			return true;
@@ -27,6 +81,29 @@ public class IOFileOpeation {
 			return false;
 		}	
 	}
+	
+	private static String newAddFile(String fileString,int saveVision){
+		
+		
+		return saveVision+splitFileInformation+Calendar.getInstance().getTime()+splitFileInformation+fileString+splitFileSymbol;
+		
+		
+	}
+	private static String firstSave(){
+		Calendar.getInstance().getTime();
+		return "0"+splitFileInformation+Calendar.getInstance().getTime()+splitFileInformation+"code"+splitFileSymbol;
+		
+	}
+	
+	
+	
+	private static String getTheNewlyFile(){
+		
+		return dataAddress;
+		
+	}
+	
+	
 	public static String readFile(String userId, String fileName) {
 		File file = new  File(dataAddress+"\\"+userId+"\\"+fileName);
 		StringBuffer sb=null;
@@ -38,11 +115,14 @@ public class IOFileOpeation {
 		String line = null;
 		
 		while((line = br.readLine()) != null) {  
-			sb.append(line);  
+			sb.append(line); 
+			sb.append("\n");
+			System.out.println(sb);
+
 		}
-		
-		
-		
+		if(sb.length()>1){
+		sb.deleteCharAt(sb.length()-1);
+		}
 		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -50,7 +130,25 @@ public class IOFileOpeation {
 			System.out.println("file not exsist");
 			
 		}
+		
+		
+		
+//		BufferedReader bre = null;
+//
+//		
+//		
+//		try {
+//			bre = new BufferedReader(new FileReader(file));
+//		} catch (FileNotFoundException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}//此时获取到的bre就是整个文件的缓存流
+//		sb = new StringBuffer();
 		return new String(sb);
+		
+		
+//		return new String(sb);
+		
 	}
 	
 	public static String readFileList(String userId) {
@@ -83,7 +181,9 @@ public class IOFileOpeation {
 //		t=t+String.format("\n1233\n213");
 //		System.out.println(t);
 //		IOFileOpeation.writeFile(t, "726752766", "123.bf");
-		System.out.println(IOFileOpeation.readFileList("asd"));
+		writeFile("asdzxcszc", "x1234567", "123.bf");
+		
+		
 	}
 	
 	

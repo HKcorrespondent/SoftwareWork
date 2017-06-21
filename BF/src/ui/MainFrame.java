@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.TextArea;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -25,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -39,16 +44,163 @@ import rmi.RemoteHelper;
 
 
 public class MainFrame extends JFrame {
-	private JTextArea textArea;
-	private JLabel resultLabel;
+//	private JTextArea textArea;
+	private MyTextArea outputArea;
+	private MyTextArea inputArea;
 	private String username;
 	private JFrame frame;
 	private JTabbedPane tabbedPanel;
 //	private ArrayList<String> fileList =null;
 	
 	public static void main(String[] s){
+		//获取系统中可用的字体的名字  
+	
+
 		new MainFrame("123456");
 		
+	}
+	public MainFrame(String username) {
+		setUIFont();
+		this.username=username;
+		
+		// 创建窗体
+		frame = new JFrame("BF Client");
+		
+		
+		setFrameLookAndFeel();
+		
+		menuInit();
+		
+		tabbedPanel = new JTabbedPane();
+		outputArea = new MyTextArea();
+		outputArea.getJTextArea().setLineWrap(true);
+		outputArea.getJTextArea().setText("output");
+		outputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
+		inputArea = new MyTextArea();
+		inputArea.getJTextArea().setLineWrap(true);
+		inputArea.getJTextArea().setText("input");
+		inputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
+		MyTextArea  textArea = new MyTextArea();
+		textArea.getJTextArea().setLineWrap(true);
+		
+		
+		
+		tabbedPanel.add("new.bf", textArea);
+		frame.add(tabbedPanel);
+		frame.add(inputArea);
+		frame.add(outputArea);
+//		textArea.setMargin(new Insets(10, 10, 10, 10));
+//		textArea.setBackground(Color.LIGHT_GRAY);
+//		JTextArea  textArea1 = new JTextArea();
+//		textArea1.setMargin(new Insets(10, 10, 10, 10));
+//		textArea1.setBackground(Color.LIGHT_GRAY);
+		
+		
+//		frame.add(textArea, BorderLayout.CENTER);
+//		tabbedPanel.addTab("panel2", textArea1);
+//		tabbedPanel.addTab("panel1", textArea);
+		
+		GridBagLayout gl =new GridBagLayout();
+		
+		GridBagConstraints gc= new GridBagConstraints();
+		
+		gc.fill=GridBagConstraints.BOTH;
+		
+//		frame.add(tabbedPanel, BorderLayout.NORTH);
+//		s.gridwidth=1; 
+//		s.weightx = 0; 
+//		s.weighty=0; 
+		gc.ipadx=0;
+		gc.ipady=0;
+		gc.gridx=0;
+		gc.gridy=0;
+		gc.gridwidth=2;
+		gc.gridheight=2;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(tabbedPanel, gc);
+		gc.fill=GridBagConstraints.BOTH;
+		gc.ipadx=0;
+		gc.ipady=0;
+		gc.gridx=0;
+		gc.gridy=2;
+		gc.gridwidth=1;
+		gc.gridheight=1;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(inputArea, gc);
+		gc.fill=GridBagConstraints.BOTH;
+		gc.ipadx=0;
+		gc.ipady=0;
+		gc.gridx=1;
+		gc.gridy=2;
+		gc.gridwidth=1;
+		gc.gridheight=1;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(outputArea, gc);
+		frame.setLayout(gl);
+//		frame.add(outputLabel, BorderLayout.EAST);
+//		frame.add(inputLabel, BorderLayout.WEST);
+	
+		frame.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					RemoteHelper.getInstance().getUserService().logout(username);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("OK!");
+				System.exit(0);
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		frame.setSize(500, 400);
+		frame.setLocation(400, 200);
+		frame.setVisible(true);
 	}
 	
 	private void menuInit(){
@@ -139,6 +291,10 @@ public class MainFrame extends JFrame {
 		
 	}
 	//得到总的文件目录
+
+	
+	
+		
 	public ArrayList<String> getFileList(){
 		ArrayList<String> fileList =new ArrayList<>();
 		String fileNameString="";
@@ -151,10 +307,7 @@ public class MainFrame extends JFrame {
 			
 		}
 		
-		
-	
-		
-		
+
 		
 		
 		if(fileNameString.equals("")){
@@ -174,97 +327,21 @@ public class MainFrame extends JFrame {
 		
 		
 	}
-	
-	public MainFrame(String username) {
-		this.username=username;
-		
-		// 创建窗体
-		frame = new JFrame("BF Client");
-		frame.setLayout(new BorderLayout());
-		
-		
-		setFrameLookAndFeel();
-		
-		menuInit();
-		
-		tabbedPanel = new JTabbedPane();
-		
-		
-//		JTextArea  textArea = new JTextArea();
-//		textArea.setMargin(new Insets(10, 10, 10, 10));
-//		textArea.setBackground(Color.LIGHT_GRAY);
-//		JTextArea  textArea1 = new JTextArea();
-//		textArea1.setMargin(new Insets(10, 10, 10, 10));
-//		textArea1.setBackground(Color.LIGHT_GRAY);
-		
-		
-//		frame.add(textArea, BorderLayout.CENTER);
-//		tabbedPanel.addTab("panel2", textArea1);
-//		tabbedPanel.addTab("panel1", textArea);
-		frame.add(tabbedPanel, BorderLayout.CENTER);
-		
-		// 显示结果
-		resultLabel = new JLabel();
-		resultLabel.setText("result");
-		frame.add(resultLabel, BorderLayout.SOUTH);
-
-		frame.addWindowListener(new WindowListener() {
-			
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowIconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowDeiconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowDeactivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				try {
-					RemoteHelper.getInstance().getUserService().logout(username);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println("OK!");
-				System.exit(0);
-			}
-			
-			@Override
-			public void windowClosed(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-				
-			}
-			
-			@Override
-			public void windowActivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		frame.setSize(500, 400);
-		frame.setLocation(400, 200);
-		frame.setVisible(true);
+	public static void setUIFont()
+	{
+		Font f = new Font("微软雅黑",Font.PLAIN,18);
+		String   names[]={ "Label", "CheckBox", "PopupMenu","MenuItem", "CheckBoxMenuItem",
+				"JRadioButtonMenuItem","ComboBox", "Button", "Tree", "ScrollPane",
+				"TabbedPane", "EditorPane", "TitledBorder", "Menu", "TextArea",
+				"OptionPane", "MenuBar", "ToolBar", "ToggleButton", "ToolTip",
+				"ProgressBar", "TableHeader", "Panel", "List", "ColorChooser",
+				"PasswordField","TextField", "Table", "Label", "Viewport",
+				"RadioButtonMenuItem","RadioButton", "DesktopPane", "InternalFrame"
+		}; 
+		for (String item : names) {
+			 UIManager.put(item+ ".font",f); 
+		}
 	}
-		
 	class MenuItemActionListener implements ActionListener {
 		/**
 		 * 子菜单响应事件
@@ -300,16 +377,17 @@ public class MainFrame extends JFrame {
 				
 				int i=	tabbedPanel.getSelectedIndex();
 				if(i>-1){
-					JTextArea text =(JTextArea)tabbedPanel.getComponentAt(i);
-					
+					JTextArea text =((MyTextArea)tabbedPanel.getComponentAt(i)).getJTextArea();
+
+//					
 					try {
-						resultLabel.setText(RemoteHelper.getInstance().getRunservice().run(text.getText(), "1 2"));
+						outputArea.getJTextArea().setText(RemoteHelper.getInstance().getRunservice().run(text.getText(), "1 2"));
 					} catch (RemoteException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}else{
-					resultLabel.setText("没有文件可被执行!");
+					outputArea.getJTextArea().setText("没有文件可被执行!");
 				}
 			}
 		}
@@ -320,8 +398,21 @@ public class MainFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int i=	tabbedPanel.getSelectedIndex();
-			System.out.println(tabbedPanel.getTitleAt(i));
-			resultLabel.setText("Save");
+			
+			if(i>-1){
+				JTextArea text =(JTextArea)tabbedPanel.getComponentAt(i);
+				try {
+					RemoteHelper.getInstance().getIOService().writeFile(text.getText(), username, tabbedPanel.getTitleAt(i));
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+				
+			}
+			
+			
 			
 //			String code = textArea.getText();
 //			try {

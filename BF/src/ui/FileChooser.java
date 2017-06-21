@@ -14,6 +14,9 @@ public class FileChooser extends  JDialog  implements ActionListener {
 
 	    public FileChooser(String username,MainFrame frame){  
 	    	super(frame, "123", true);
+	    	
+	    	
+	    	
 	    	JButton jb= new JButton("quit");
 	    	this.add(jb);
 	    	jb.addActionListener(this);
