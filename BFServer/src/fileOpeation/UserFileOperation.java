@@ -23,7 +23,7 @@ public class UserFileOperation {
 			return false;
 		}else{
 			file.mkdir();
-			File file1 = new  File(dataAddress+"\\"+username+"\\"+username);
+			File file1 = new  File(dataAddress+"\\"+username+"\\"+"_"+username);
 			try {
 				FileWriter fw = new FileWriter(file1, false);
 				fw.write(username+" "+password);
@@ -42,7 +42,7 @@ public class UserFileOperation {
 	
 	}
 	public static boolean login(String username, String password){
-		File file = new  File(dataAddress+"\\"+username+"\\"+username);
+		File file = new  File(dataAddress+"\\"+username+"\\"+"_"+username);
 		if(!file.exists()){
 			return false;
 		}

@@ -22,7 +22,7 @@ public class IOServiceImpl implements IOService{
 	@Override
 	public String readFileList(String userId) {
 		// TODO Auto-generated method stub
-		return "OK";
+		return IOFileOpeation.readFileList(userId);
 	}
 	
 }

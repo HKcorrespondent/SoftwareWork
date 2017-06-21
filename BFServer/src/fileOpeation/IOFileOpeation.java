@@ -41,7 +41,7 @@ public class IOFileOpeation {
 			sb.append(line);  
 		}
 		
-
+		
 		
 		
 		} catch (Exception e) {
@@ -53,19 +53,37 @@ public class IOFileOpeation {
 		return new String(sb);
 	}
 	
+	public static String readFileList(String userId) {
+		// TODO Auto-generated method stub
+		File file = new  File(dataAddress+"\\"+userId);
+		System.out.println(dataAddress+"\\"+userId);
+		File[] files= file.listFiles();
+		String retString = "";
+		for(int i =0;i<files.length;i++){
+			
+			if(files[i].getName().charAt(0)!='_'){
+				retString=files[i].getName()+" "+retString;
+			}
+		}
+		
+
 	
+		
+		System.out.println(retString);
+		return retString;
+	}
 	
 	
 	
 	public static void main(String[] args) {
 		
 		
-		Scanner s=new Scanner(System.in);
-		String t=s.nextLine();
-		t=t+String.format("\n1233\n213");
-		System.out.println(t);
-		IOFileOpeation.writeFile(t, "726752766", "123.bf");
-		System.out.println(IOFileOpeation.readFile("726752766", "123.bf"));
+//		Scanner s=new Scanner(System.in);
+//		String t=s.nextLine();
+//		t=t+String.format("\n1233\n213");
+//		System.out.println(t);
+//		IOFileOpeation.writeFile(t, "726752766", "123.bf");
+		System.out.println(IOFileOpeation.readFileList("asd"));
 	}
 	
 	

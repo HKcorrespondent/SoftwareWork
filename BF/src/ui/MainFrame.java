@@ -2,6 +2,8 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -12,6 +14,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -20,9 +24,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -39,6 +45,12 @@ public class MainFrame extends JFrame {
 	private JFrame frame;
 	private JTabbedPane tabbedPanel;
 //	private ArrayList<String> fileList =null;
+	
+	public static void main(String[] s){
+		new MainFrame("123456");
+		
+	}
+	
 	private void menuInit(){
 		
 		
@@ -83,23 +95,84 @@ public class MainFrame extends JFrame {
 	}
 	
 	
-	public String creatnewFile(String filename){
-		if(getFileList().contains(filename)){
-			//弹出提示已经有了这个文件
-		}else{
-			//服务器端先创建文件
-			//本地创建
+	public String creatnewFile(String filename,String fileType){
+		
+		
+		
+		
+		if(filename.length()<3||filename.length()>15){
+			return "文件长度必须在3-15之间!";
+		}
+
+	
+		Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
+		Matcher matcher = pattern.matcher(username);
+		if(!matcher.matches()){
+			return "文件名含有非法字符!";
 		}
 		
 		
+
 		
-		return username;
+		
+		if(getFileList().contains(filename+"."+fileType)){
+			//弹出提示已经有了这个文件
+			
+			return "该文件已存在!";
+		}else{
+			try {
+				RemoteHelper.getInstance().getIOService().writeFile("",username , filename+"."+fileType);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//服务器端先创建文件
+			
+			tabbedPanel.addTab( filename+"."+fileType, new JTextArea());
+			
+			
+			
+			//本地创建
+			return "成功创建!";
+		}
 		
 	}
 	//得到总的文件目录
 	public ArrayList<String> getFileList(){
 		ArrayList<String> fileList =new ArrayList<>();
+		String fileNameString="";
+		try {
+			fileNameString = RemoteHelper.getInstance().getIOService().readFileList(username);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+	
+		
+		
+		
+		
+		if(fileNameString.equals("")){
+			
+		}else{
+			String[] fileNameArgs = fileNameString.split(" ");
+			for(int i=0;i<fileNameArgs.length;i++){
+				fileList.add(fileNameArgs[i]);
+			}
+			
+			
+			
+			
+		}
+		
 		return fileList;
+		
+		
 	}
 	
 	public MainFrame(String username) {
@@ -202,12 +275,18 @@ public class MainFrame extends JFrame {
 			
 		
 			if(cmd.equals("New")){
-				
-				
+				newFileDialog newfile = new newFileDialog(username, MainFrame.this);
+				newfile.setLocationRelativeTo(MainFrame.this.tabbedPanel);
+				newfile.setSize(300, 100);
+				newfile.setVisible(true);
 				
 				
 			}else if (cmd.equals("Open")) {
 //				textArea.setText("Open");
+				 ArrayList<String> list = MainFrame.this.getFileList();
+				
+				
+				
 				
 				FileChooser fc= new FileChooser(username, MainFrame.this);
 				fc.setVisible(true);
@@ -215,10 +294,7 @@ public class MainFrame extends JFrame {
 				
 				
 				
-			} else if (cmd.equals("Save")) {
-				
-//				textArea.setText("Save");
-			} else if (cmd.equals("Run")) {
+			}  else if (cmd.equals("Run")) {
 				
 				
 				
@@ -243,27 +319,35 @@ public class MainFrame extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+			int i=	tabbedPanel.getSelectedIndex();
+			System.out.println(tabbedPanel.getTitleAt(i));
 			resultLabel.setText("Save");
 			
-			String code = textArea.getText();
-			try {
-				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
-			} catch (RemoteException e1) {
-				e1.printStackTrace();
-			}
+//			String code = textArea.getText();
+//			try {
+//				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
+//			} catch (RemoteException e1) {
+//				e1.printStackTrace();
+//			}
 		}
 
 	}
-	
+	//做的不好
 	class newFileDialog extends JDialog implements ActionListener{
+		MainFrame frame = null;
+		JTextField filename= null;
 		public newFileDialog(String username,MainFrame frame){  
+			
 	    	super(frame, "newFile", true);
+	    	this.frame=frame;
+	    	
+	    
 	    	setLayout(new GridLayout(2, 2));
 	    	JButton bf= new JButton("BF文件");
 	    	JButton ook = new JButton("Ook!文件");
 	    	JLabel nameLabel = new JLabel("文件名:");
-	    	JTextField filename = new JTextField();
+	    	nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    	filename = new JTextField();
 	    	this.add(nameLabel);
 	    	this.add(filename);
 	    	this.add(bf);
@@ -275,23 +359,43 @@ public class MainFrame extends JFrame {
 	    	
 	    	
 	    }
-
+		
+		
+		
+		
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			String cmd = e.getActionCommand();
+			
+			
+			
+			
+			
+			
+			
 			if(cmd.equals("BF文件")){
-				
-				
+				String message = frame.creatnewFile(filename.getText(),"bf");
+				if(message.equals("成功创建!"))
+				{
+					this.dispose();
+				}else{
+					new JOptionPane().showMessageDialog(this, message);
+				}
 				
 			}else if (cmd.equals("Ook!文件")){
-				
-				
-				
+				String message = frame.creatnewFile(filename.getText(),"ook");
+				if(message.equals("成功创建!"))
+				{
+					this.dispose();
+				}else{
+					new JOptionPane().showMessageDialog(this, message);
+				}
 			}
 			
 			
 		}  
 	}
-	
+
 }
