@@ -29,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -37,55 +38,161 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
 
 import org.omg.Messaging.SyncScopeHelper;
 
 import rmi.RemoteHelper;
 
 
-public class MainFrame extends JFrame {
+public class MainWindow {
 //	private JTextArea textArea;
-	private MyTextArea outputArea;
-	private MyTextArea inputArea;
+	private InAndOutPutTextArea outputArea;
+	private InAndOutPutTextArea inputArea;
 	private String username;
 	private JFrame frame;
 	private JTabbedPane tabbedPanel;
 //	private ArrayList<String> fileList =null;
+	private String[] fileTypeArgs = null;
+	public JFrame getJFrame(){
+		return frame;
+	}
+	public  String[] getTotalFileType(){
+		return fileTypeArgs;
+	}
+	public void ConfigurationInit(){
+		try {
+			fileTypeArgs = RemoteHelper.getInstance().getConfiguratioSservice().getExecutableFileType();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	} 
+//	public static void main(String[] s){
+//		//获取系统中可用的字体的名字  
+//	
+//
+//		new MainWindow("x123456");
+//		
+//	}
+	class CloseButton extends JButton{
+		int countOnTheTab = 0;
+		public CloseButton(String s,int count){
+			super(s);
+			countOnTheTab=count;
+			Font font = new Font("微软雅黑",Font.PLAIN,13);
+			setFont(font);
+//			setBorderPainted(false);
+//			closeButton.setOpaque(false);
+			setContentAreaFilled(false);
+			setHorizontalAlignment(SwingConstants.RIGHT);
+			setBorder(new EmptyBorder(2, 2, 2, 2));
+			addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					tabbedPanel.remove(count);
+				}
+			});
+			
+		}
+	}
 	
-	public static void main(String[] s){
-		//获取系统中可用的字体的名字  
-	
+	public void addNewTextArea(String title,MyTextArea textArea){
+		Font font = new Font("微软雅黑",Font.PLAIN,13);
+		int count=tabbedPanel.getTabCount();
+		tabbedPanel.add(title, textArea);
 
-		new MainFrame("123456");
+		
+		JLabel titleLabel = new JLabel(title);
+		titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		titleLabel.setFont(font);
+		titleLabel.setOpaque(false);
+		
+		font = new Font("微软雅黑",Font.BOLD,13);
+		CloseButton closeButton = new CloseButton("X",count);
+		
+		
+		
+		JPanel tabPanel = new JPanel();
+		
+		tabPanel.add(titleLabel);
+		tabPanel.add(closeButton);
+		
+		GridBagLayout gl =new GridBagLayout();
+		
+		GridBagConstraints gc= new GridBagConstraints();
+		
+		gc.fill=GridBagConstraints.BOTH;
+		
+//		frame.add(tabbedPanel, BorderLayout.NORTH);
+//		s.gridwidth=1; 
+//		s.weightx = 0; 
+//		s.weighty=0; 
+		
+		gc.gridx=1;
+		gc.gridy=1;
+		gc.gridwidth=3;
+		gc.gridheight=1;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(titleLabel, gc);
+		gc.fill=GridBagConstraints.BOTH;
+	
+		gc.gridx=4;
+		gc.gridy=1;
+		gc.gridwidth=1;
+		gc.gridheight=1;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(closeButton, gc);
+		
+
+		tabPanel.setLayout(gl);
+		tabPanel.setOpaque(false);
+		
+		
+//		tabPanel.setSize(100,50);
+//		tabbedPanel.setTabComponentAt(count, titleLabel);
+//		tabbedPanel.setTabComponentAt(count, closeButton);
+		tabbedPanel.setTabComponentAt(count, tabPanel);
 		
 	}
-	public MainFrame(String username) {
+	public MainWindow(String username) {
+		frame = new JFrame("Hello! "+username+"-BF Client");
 		setUIFont();
 		this.username=username;
 		
 		// 创建窗体
-		frame = new JFrame("BF Client");
+		
 		
 		
 		setFrameLookAndFeel();
-		
+		ConfigurationInit();
 		menuInit();
 		
 		tabbedPanel = new JTabbedPane();
-		outputArea = new MyTextArea("outputArea");
+		
+		
+		outputArea = new InAndOutPutTextArea("outputArea");
 		outputArea.getJTextArea().setLineWrap(true);
 		outputArea.getJTextArea().setText("output");
 		outputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
-		inputArea = new MyTextArea("outputArea");
+		inputArea = new InAndOutPutTextArea("outputArea");
 		inputArea.getJTextArea().setLineWrap(true);
 		inputArea.getJTextArea().setText("input");
 		inputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
-		MyTextArea  textArea = new MyTextArea("new.bf");
-		textArea.getJTextArea().setLineWrap(true);
 		
 		
-		
-		tabbedPanel.add("new.bf", textArea);
+//		MyTextArea  textArea = new MyTextArea("new.bf");
+//		textArea.getJTextArea().setLineWrap(true);
+//		tabbedPanel.add("new.bf", textArea);
+////		tabbedPanel.setComponentAt();
+//		
+//		tabbedPanel.setTabComponentAt(0, new JButton("X"));
 		frame.add(tabbedPanel);
 		frame.add(inputArea);
 		frame.add(outputArea);
@@ -182,6 +289,7 @@ public class MainFrame extends JFrame {
 					e.printStackTrace();
 				}
 				System.out.println("OK!");
+				MainWindow.this.getJFrame().dispose();
 				System.exit(0);
 			}
 			
@@ -221,10 +329,19 @@ public class MainFrame extends JFrame {
 		fileMenu.add(saveMenuItem);
 		JMenuItem runMenuItem = new JMenuItem("Run");
 		fileMenu.add(runMenuItem);
-		Font font=new Font(Font.DIALOG_INPUT, Font.BOLD, 50);
-		menuBar.setFont(font);
-		frame.setJMenuBar(menuBar);
-
+//		Font font=new Font(Font.DIALOG_INPUT, Font.BOLD, 50);
+//		menuBar.setFont(font);
+		
+		JMenu editMenu = new JMenu("edit");
+		
+		JMenuItem undoMenuItem = new JMenuItem("Undo");
+		editMenu.add(undoMenuItem);
+		JMenuItem redoMenuItem = new JMenuItem("Redo");
+		editMenu.add(redoMenuItem);
+		JMenuItem historyVersion = new JMenuItem("HistoryVersion");
+		editMenu.add(historyVersion);
+		
+		
 		
 		
 		
@@ -232,6 +349,9 @@ public class MainFrame extends JFrame {
 		openMenuItem.addActionListener(new MenuItemActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
 		runMenuItem.addActionListener(new MenuItemActionListener());
+		
+		
+		frame.setJMenuBar(menuBar);
 	}
 	private void setFrameLookAndFeel(){
 		String lookAndFeel ="javax.swing.plaf.metal.MetalLookAndFeel";
@@ -247,7 +367,81 @@ public class MainFrame extends JFrame {
 		} 
 	}
 	
+	public void openFile(String filename,String fileType){
+
+		CodeAggregate file = processingReadFile(filename+fileType) ;
+		MyTextArea newOpen = new MyTextArea(filename+fileType);
+		newOpen.getJTextArea().setText(file.getTheNewlyCode());
+		addNewTextArea(filename+fileType, newOpen);
+//		tabbedPanel.add( filename+fileType, newOpen);
+		
+	}
+	private CodeAggregate processingReadFile(String fileTotalName){
+		String content = null;
+		try {
+			System.out.println(username+"!!!!!!!"+ fileTotalName);
+			 content = RemoteHelper.getInstance().getIOService().readFile(username, fileTotalName);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		CodeAggregate file = new CodeAggregate(content);
 	
+		return file;
+		
+	}
+
+	class CodeAggregate{
+		
+		private String[] NumberOfTimesSaved  ;
+		private String[] Savetime;
+		private String[] code;
+		CodeAggregate(String content){
+			String[] allInformation = content.split("_");
+		
+			
+			
+			String[] processedfile = content.split("@");
+			 
+			NumberOfTimesSaved 	= new String[allInformation.length];
+			Savetime			= new String[allInformation.length];
+			code				= new String[allInformation.length];
+			
+			for(int i=0;i<allInformation.length;i++){
+				allInformation[i] = allInformation[i].replaceAll("_", "")+" ";
+				System.out.println("allInformation"+i+":"+ allInformation[i]);
+				
+				String[] oneFileInformatin = allInformation[i].split("@");
+				if(oneFileInformatin[2].equals(" ")){
+					oneFileInformatin[2]="";
+				}
+				NumberOfTimesSaved[i] 	= oneFileInformatin[0];
+				Savetime[i]				= oneFileInformatin[1];
+				code[i]					= oneFileInformatin[2];
+			}
+			
+		}
+		
+		public String getTheNewlyCode(){
+			return code[code.length-1];
+			
+		}
+		
+		
+	}
+	
+	
+	
+	public void openFile(String fileTotalName){
+	
+		CodeAggregate file = processingReadFile(fileTotalName) ;
+		
+		MyTextArea newOpen = new MyTextArea(fileTotalName);
+		newOpen.getJTextArea().setText(file.getTheNewlyCode());
+		
+		addNewTextArea(fileTotalName, newOpen);
+//		tabbedPanel.add( fileTotalName, newOpen);
+	}
 	public String creatnewFile(String filename,String fileType){
 		
 		
@@ -268,14 +462,14 @@ public class MainFrame extends JFrame {
 
 		
 		
-		if(getFileList().contains(filename+"."+fileType)){
+		if(getFileList().contains(filename+fileType)){
 			//弹出提示已经有了这个文件
 			
 			return "该文件已存在!";
 		}else{
 			//服务器端先创建文件
 			try {
-				RemoteHelper.getInstance().getIOService().writeFile("",username , filename+"."+fileType);
+				RemoteHelper.getInstance().getIOService().writeFile("",username , filename+fileType);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -283,7 +477,7 @@ public class MainFrame extends JFrame {
 			//本地创建
 			
 			
-			tabbedPanel.add( filename+"."+fileType, new MyTextArea(filename+"."+fileType));
+			tabbedPanel.add( filename+fileType, new MyTextArea(filename+fileType));
 			
 			
 			
@@ -354,8 +548,8 @@ public class MainFrame extends JFrame {
 			
 		
 			if(cmd.equals("New")){
-				newFileDialog newfile = new newFileDialog(username, MainFrame.this);
-				newfile.setLocationRelativeTo(MainFrame.this.tabbedPanel);
+				NewFileDialog newfile = new NewFileDialog(username, MainWindow.this);
+				newfile.setLocationRelativeTo(MainWindow.this.tabbedPanel);
 				newfile.setSize(300, 100);
 				newfile.setVisible(true);
 				
@@ -367,8 +561,8 @@ public class MainFrame extends JFrame {
 				
 				
 				
-				FileChooser fc= new FileChooser(username, MainFrame.this);
-				fc.setLocationRelativeTo(MainFrame.this.tabbedPanel);
+				FileChooser fc= new FileChooser(username, MainWindow.this);
+				fc.setLocationRelativeTo(MainWindow.this.tabbedPanel);
 //				fc.setSize(200,200);
 				fc.setVisible(true);
 				
@@ -393,6 +587,16 @@ public class MainFrame extends JFrame {
 				}else{
 					outputArea.getJTextArea().setText("没有文件可被执行!");
 				}
+			}else if(cmd.equals("Undo")){
+				
+			}else if(cmd.equals("Redo")){
+				
+			}else if(cmd.equals("HistoryVersion")){
+				
+				
+				
+				
+				
 			}
 		}
 	}
@@ -404,9 +608,10 @@ public class MainFrame extends JFrame {
 			int i=	tabbedPanel.getSelectedIndex();
 			
 			if(i>-1){
-				JTextArea text =(JTextArea)tabbedPanel.getComponentAt(i);
+				MyTextArea text =(MyTextArea)tabbedPanel.getComponentAt(i);
+				//非法字符值得商榷
 				try {
-					RemoteHelper.getInstance().getIOService().writeFile(text.getText(), username, tabbedPanel.getTitleAt(i));
+					RemoteHelper.getInstance().getIOService().writeFile(text.getJTextArea().getText(), username, tabbedPanel.getTitleAt(i));
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -428,69 +633,6 @@ public class MainFrame extends JFrame {
 
 	}
 	//做的不好
-	class newFileDialog extends JDialog implements ActionListener{
-		MainFrame frame = null;
-		JTextField filename= null;
-		public newFileDialog(String username,MainFrame frame){  
-			
-	    	super(frame, "newFile", true);
-	    	this.frame=frame;
-	    	
-	    	setBounds(120,120,100,100);
-	    	setLayout(new GridLayout(2, 2));
-	    	JButton bf= new JButton("BF文件");
-	    	JButton ook = new JButton("Ook!文件");
-	    	JLabel nameLabel = new JLabel("文件名:");
-	    	nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-	    	filename = new JTextField();
-	    	this.add(nameLabel);
-	    	this.add(filename);
-	    	this.add(bf);
-	    	this.add(ook);
-	    	bf.addActionListener(this);
-	    	ook.addActionListener(this);
-	    	
-	    	
-	    	
-	    	
-	    }
-		
-		
-		
-		
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			String cmd = e.getActionCommand();
-			
-			
-			
-			
-			
-			
-			
-			if(cmd.equals("BF文件")){
-				String message = frame.creatnewFile(filename.getText(),"bf");
-				if(message.equals("成功创建!"))
-				{
-					this.dispose();
-				}else{
-					new JOptionPane().showMessageDialog(this, message);
-				}
-				
-			}else if (cmd.equals("Ook!文件")){
-				String message = frame.creatnewFile(filename.getText(),"ook");
-				if(message.equals("成功创建!"))
-				{
-					this.dispose();
-				}else{
-					new JOptionPane().showMessageDialog(this, message);
-				}
-			}
-			
-			
-		}  
-	}
+	
 
 }

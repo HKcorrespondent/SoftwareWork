@@ -14,22 +14,24 @@ import javax.swing.JLabel;
 
 public class FileChooser extends  JDialog  implements ActionListener {
 
-	
+	MainWindow mainWindow =null;
+	JComboBox fileNameComboBox = null;
 
-
-	    public FileChooser(String username,MainFrame frame){  
-	    	super(frame, "打开文件", true);
+	    
+		public FileChooser(String username,MainWindow frame){  
+	    	super(frame.getJFrame(), "打开文件", true);
+	    	this.mainWindow=frame;
 	    	setBounds(120,120,200,200);
 	    	setLayout(new GridLayout(2, 2));
 	    	JLabel name = new JLabel("文件名:");
-	    	JComboBox fileName=new JComboBox(); 
+	    	fileNameComboBox=new JComboBox(); 
 	    	
 	    	Iterator<String> list=frame.getFileList().iterator();
 	    	while(list.hasNext()){
-	    		fileName.addItem(list.next());
+	    		fileNameComboBox.addItem(list.next());
 	    	}
 	    	
-	    	
+	    	setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	    	
 	    	
 	    	
@@ -38,13 +40,13 @@ public class FileChooser extends  JDialog  implements ActionListener {
 	    	JButton quit= new JButton("取消");
 	    	
 	    	add(name);
-	    	add(fileName);
+	    	add(fileNameComboBox);
 	    	add(chose);
 	    	add(quit);
 	    	chose.addActionListener(this);
 	    	quit.addActionListener(this);
 	    	setBounds(120,120,100,100);
-	    	setSize(500,180);
+	    	setSize(500,120);
 	    	
 	    	
 	    }  
@@ -53,9 +55,15 @@ public class FileChooser extends  JDialog  implements ActionListener {
 	    	String cmd = e.getActionCommand();
 	    	
 	    	if(cmd.equals("确定")){
+	    		mainWindow.openFile((String)fileNameComboBox.getSelectedItem());
+	    		
 	    		System.out.println("确定");
+	    		this.dispose();
 	    	}else if(cmd.equals("取消")){
+	    		
+	    		
 	    		System.out.println("取消");
+	    		this.dispose();
 	    	}
 	      
 	          

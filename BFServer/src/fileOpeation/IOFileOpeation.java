@@ -20,6 +20,7 @@ public class IOFileOpeation {
 	private static String dataAddress = UserFileOperation.dataAddress;
 	private final static String splitFileSymbol = "_";
 	private final static String splitFileInformation = "@";
+	private static int HistoryVersionNumber = 3;
 	public static boolean  writeFile(String codeGetIn, String userId, String fileName){
 		File file1 = new  File(dataAddress+"\\"+userId+"\\"+fileName);
 		String finalString ="";
@@ -28,13 +29,13 @@ public class IOFileOpeation {
 		}else{
 			String readString =readFile(userId, fileName);
 			String[] fileArgs=readString.split(splitFileSymbol);
-			System.out.println(fileArgs.length);
-			if(fileArgs.length>=3){
-				System.out.println(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
+//			System.out.println(fileArgs.length);
+			if(fileArgs.length>=HistoryVersionNumber){
+//				System.out.println(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
 				int saveVision=Integer.parseInt(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
 				
-				System.out.println(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
-				System.out.println(saveVision+"!!");
+//				System.out.println(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
+//				System.out.println(saveVision+"!!");
 				
 				String newfileStrng=newAddFile(codeGetIn,saveVision+1);
 				for(int i=1;i<fileArgs.length;i++){
@@ -46,8 +47,8 @@ public class IOFileOpeation {
 			}else{
 				int saveVision=Integer.parseInt(fileArgs[fileArgs.length-1].split(splitFileInformation)[0]);
 				
-				System.out.println(fileArgs[fileArgs.length-1]);
-				System.out.println(saveVision+"!!");
+//				System.out.println(fileArgs[fileArgs.length-1]);
+//				System.out.println(saveVision+"!!");
 				
 				String newfileStrng=newAddFile(codeGetIn,saveVision+1);
 				for(int i=0;i<fileArgs.length;i++){
@@ -117,7 +118,7 @@ public class IOFileOpeation {
 		while((line = br.readLine()) != null) {  
 			sb.append(line); 
 			sb.append("\n");
-			System.out.println(sb);
+//			System.out.println(sb);
 
 		}
 		if(sb.length()>1){

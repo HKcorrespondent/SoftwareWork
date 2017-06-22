@@ -3,10 +3,12 @@ package ui;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class MyTextArea extends JScrollPane{
+public class InAndOutPutTextArea extends JScrollPane{
 	JTextArea textArea =new JTextArea();
 	String title ="";
-	public MyTextArea(String title){
+	
+	
+	public InAndOutPutTextArea(String title){
 		this.title=title;
 		setViewportView(textArea);
 		
@@ -20,6 +22,11 @@ public class MyTextArea extends JScrollPane{
 	
 	
 	
+
+
+
+
+
 	public JTextArea getJTextArea(){
 		return textArea;
 	}

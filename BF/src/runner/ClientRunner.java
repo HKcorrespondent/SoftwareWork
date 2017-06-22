@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import rmi.RemoteHelper;
 import service.IOService;
 import ui.LoginFrame;
-import ui.MainFrame;
+import ui.MainWindow;
 
 public class ClientRunner {
 	private RemoteHelper remoteHelper;

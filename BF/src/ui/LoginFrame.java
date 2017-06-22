@@ -127,7 +127,7 @@ public class LoginFrame extends JFrame{
 					
 					String trueUsername=username.getText();
 					disposeTheLoginFrame();
-					new MainFrame(trueUsername);
+					new MainWindow(trueUsername);
 				}else{
 					showLabel.setText("用户名或密码错误或已经登录");
 				}

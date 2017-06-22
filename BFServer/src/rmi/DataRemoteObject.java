@@ -3,14 +3,16 @@ package rmi;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import service.ConfigurationService;
 import service.IOService;
 import service.RunService;
 import service.UserService;
+import serviceImpl.ConfigurationServiceImpl;
 import serviceImpl.IOServiceImpl;
 import serviceImpl.RunServiceImpl;
 import serviceImpl.UserServiceImpl;
 
-public class DataRemoteObject extends UnicastRemoteObject implements IOService, UserService,RunService{
+public class DataRemoteObject extends UnicastRemoteObject implements IOService, UserService,RunService,ConfigurationService{
 	/**
 	 * 
 	 */
@@ -18,10 +20,12 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 	private IOService iOService;
 	private UserService userService;
 	private RunService runService;
+	private ConfigurationService configurationService;
 	protected DataRemoteObject() throws RemoteException {
 		iOService = new IOServiceImpl();
 		userService = new UserServiceImpl();
 		runService = new RunServiceImpl();
+		configurationService  =new ConfigurationServiceImpl();
 	}
 	@Override
 	public boolean writeFile(String file, String userId, String fileName) throws RemoteException{
@@ -65,5 +69,11 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 		// TODO Auto-generated method stub
 		return runService.run(code, param);
 	}
+	@Override
+	public String[] getExecutableFileType() throws RemoteException {
+		// TODO Auto-generated method stub
+		return configurationService.getExecutableFileType();
+	}
+	
 
 }
