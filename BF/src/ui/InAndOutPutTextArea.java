@@ -4,8 +4,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class InAndOutPutTextArea extends JScrollPane{
-	JTextArea textArea =new JTextArea();
-	String title ="";
+	private JTextArea textArea =new JTextArea();
+	private String title ="";
 	
 	
 	public InAndOutPutTextArea(String title){
@@ -29,6 +29,9 @@ public class InAndOutPutTextArea extends JScrollPane{
 
 	public JTextArea getJTextArea(){
 		return textArea;
+	}
+	public String getText(){
+		return textArea.getText();
 	}
 	public String getTitle(){
 		return title;

@@ -29,6 +29,11 @@ public class LoginFrame extends JFrame{
 	private JButton loginButton;
 	private JButton signupButton;
 	private JLabel showLabel;
+	
+	
+	
+	
+	
 	public LoginFrame(){
 		initSizeAndOthers();
 	    initComnponent();

@@ -1,5 +1,6 @@
 package runner;
 
+import java.awt.EventQueue;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -33,7 +34,18 @@ public class ClientRunner {
 	}
 	
 	private void initGUI() {
-		LoginFrame loginFrame = new LoginFrame();
+		EventQueue.invokeLater(new Runnable()
+		{
+		public void run()
+		{
+			new LoginFrame();
+
+			
+		}
+		});
+		
+		
+		
 	}
 	
 	public void test(){

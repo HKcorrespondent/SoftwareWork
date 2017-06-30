@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -52,6 +53,7 @@ public class MainWindow {
 	private String username;
 	private JFrame frame;
 	private JTabbedPane tabbedPanel;
+	
 //	private ArrayList<String> fileList =null;
 	private String[] fileTypeArgs = null;
 	public JFrame getJFrame(){
@@ -99,7 +101,18 @@ public class MainWindow {
 		}
 	}
 	
-	public void addNewTextArea(String title,MyTextArea textArea){
+	public void addTextAreaToTabbedPanel(String title,CodeTextArea textArea){
+//		System.out.println("title: "+title);
+		for(int i=0;i<tabbedPanel.getTabCount();i++){
+//			System.out.println("tabbedPanel.getTitleAt(i): "+tabbedPanel.getTitleAt(i));
+			if(tabbedPanel.getTitleAt(i).equals(title)){
+				tabbedPanel.setComponentAt(i, textArea);
+				return ;
+			}
+		}
+		
+		
+		
 		Font font = new Font("微软雅黑",Font.PLAIN,13);
 		int count=tabbedPanel.getTabCount();
 		tabbedPanel.add(title, textArea);
@@ -172,7 +185,7 @@ public class MainWindow {
 		
 		setFrameLookAndFeel();
 		ConfigurationInit();
-		menuInit();
+		initMenu();
 		
 		tabbedPanel = new JTabbedPane();
 		
@@ -312,43 +325,81 @@ public class MainWindow {
 		frame.setVisible(true);
 	}
 	
-	private void menuInit(){
-		
-		
-		
+	private void initMenu(){
 		
 		
 		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		menuBar.add(fileMenu);
-		JMenuItem newMenuItem = new JMenuItem("New");
-		fileMenu.add(newMenuItem);
-		JMenuItem openMenuItem = new JMenuItem("Open");
-		fileMenu.add(openMenuItem);
-		JMenuItem saveMenuItem = new JMenuItem("Save");
-		fileMenu.add(saveMenuItem);
-		JMenuItem runMenuItem = new JMenuItem("Run");
-		fileMenu.add(runMenuItem);
-//		Font font=new Font(Font.DIALOG_INPUT, Font.BOLD, 50);
-//		menuBar.setFont(font);
+		{
+			JMenu fileMenu = new JMenu("File");
+			
+			
+			JMenuItem newMenuItem = new JMenuItem("New");
+			newMenuItem.addActionListener(new MenuItemActionListener());
+			fileMenu.add(newMenuItem);
+			
+			JMenuItem openMenuItem = new JMenuItem("Open");
+			openMenuItem.addActionListener(new MenuItemActionListener());
+			fileMenu.add(openMenuItem);
+			
+			JMenuItem saveMenuItem = new JMenuItem("Save");
+			saveMenuItem.addActionListener(new SaveActionListener());
+			fileMenu.add(saveMenuItem);
+
+			JMenuItem quitMenuItem = new JMenuItem("Quit");
+			quitMenuItem.addActionListener(new MenuItemActionListener());
+			fileMenu.add(quitMenuItem);
+
+			
+			menuBar.add(fileMenu);
+		}
+		{
+			JMenu editMenu = new JMenu("edit");
+			
+			
+			JMenuItem undoMenuItem = new JMenuItem("Undo");
+			undoMenuItem.addActionListener(new MenuItemActionListener());
+			undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
+					                                           java.awt.Event.CTRL_MASK));
+			
+			editMenu.add(undoMenuItem);
+			
+			JMenuItem redoMenuItem = new JMenuItem("Redo");
+			redoMenuItem.addActionListener(new MenuItemActionListener());
+			redoMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y,  
+                    										   java.awt.Event.CTRL_MASK));
+			editMenu.add(redoMenuItem);
+			
+			JMenuItem historyVersion = new JMenuItem("HistoryVersion");
+			historyVersion.addActionListener(new MenuItemActionListener());
+			editMenu.add(historyVersion);
+			
+			
+			menuBar.add(editMenu);
+		}
+		{
+			JMenu runMenu = new JMenu("edit");
+
+			
+			JMenuItem runMenuItem = new JMenuItem("Run");
+			runMenuItem.addActionListener(new MenuItemActionListener());
+			runMenuItem.setAccelerator(KeyStroke.getKeyStroke("F5"));
+			runMenu.add(runMenuItem);
+			
+			JMenuItem oneStepRunMenuItem = new JMenuItem("OneStep");
+			oneStepRunMenuItem.addActionListener(new MenuItemActionListener());
+			oneStepRunMenuItem.setAccelerator(KeyStroke.getKeyStroke("F6"));
+			runMenu.add(oneStepRunMenuItem);
+
 		
-		JMenu editMenu = new JMenu("edit");
-		
-		JMenuItem undoMenuItem = new JMenuItem("Undo");
-		editMenu.add(undoMenuItem);
-		JMenuItem redoMenuItem = new JMenuItem("Redo");
-		editMenu.add(redoMenuItem);
-		JMenuItem historyVersion = new JMenuItem("HistoryVersion");
-		editMenu.add(historyVersion);
+			menuBar.add(runMenu);
+		}
 		
 		
 		
 		
 		
-		newMenuItem.addActionListener(new MenuItemActionListener());
-		openMenuItem.addActionListener(new MenuItemActionListener());
-		saveMenuItem.addActionListener(new SaveActionListener());
-		runMenuItem.addActionListener(new MenuItemActionListener());
+		
+		
 		
 		
 		frame.setJMenuBar(menuBar);
@@ -370,22 +421,22 @@ public class MainWindow {
 	public void openFile(String filename,String fileType){
 
 		CodeAggregate file = processingReadFile(filename+fileType) ;
-		MyTextArea newOpen = new MyTextArea(filename+fileType);
-		newOpen.getJTextArea().setText(file.getTheNewlyCode());
-		addNewTextArea(filename+fileType, newOpen);
+		CodeTextArea newOpen = new CodeTextArea(filename+fileType,file);
+		newOpen.setText(file.getTheNewlyCode());
+		addTextAreaToTabbedPanel(filename+fileType, newOpen);
 //		tabbedPanel.add( filename+fileType, newOpen);
 		
 	}
-	private CodeAggregate processingReadFile(String fileTotalName){
+	public  CodeAggregate processingReadFile(String fileTotalName){
 		String content = null;
 		try {
-			System.out.println(username+"!!!!!!!"+ fileTotalName);
+//			System.out.println(username+"!!!!!!!"+ fileTotalName);
 			 content = RemoteHelper.getInstance().getIOService().readFile(username, fileTotalName);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CodeAggregate file = new CodeAggregate(content);
+		CodeAggregate file = new CodeAggregate(content,fileTotalName);
 	
 		return file;
 		
@@ -395,8 +446,14 @@ public class MainWindow {
 		
 		private String[] NumberOfTimesSaved  ;
 		private String[] Savetime;
-		private String[] code;
-		CodeAggregate(String content){
+		private String[] Code;
+		private String fileTotalName ;
+		public String getFileTotalName(){
+			return fileTotalName;
+			
+		}
+		CodeAggregate(String content,String fileTotalName){
+			this.fileTotalName =fileTotalName;
 			String[] allInformation = content.split("_");
 		
 			
@@ -405,11 +462,11 @@ public class MainWindow {
 			 
 			NumberOfTimesSaved 	= new String[allInformation.length];
 			Savetime			= new String[allInformation.length];
-			code				= new String[allInformation.length];
+			Code				= new String[allInformation.length];
 			
 			for(int i=0;i<allInformation.length;i++){
 				allInformation[i] = allInformation[i].replaceAll("_", "")+" ";
-				System.out.println("allInformation"+i+":"+ allInformation[i]);
+//				System.out.println("allInformation"+i+":"+ allInformation[i]);
 				
 				String[] oneFileInformatin = allInformation[i].split("@");
 				if(oneFileInformatin[2].equals(" ")){
@@ -417,51 +474,60 @@ public class MainWindow {
 				}
 				NumberOfTimesSaved[i] 	= oneFileInformatin[0];
 				Savetime[i]				= oneFileInformatin[1];
-				code[i]					= oneFileInformatin[2];
+				Code[i]					= oneFileInformatin[2];
 			}
 			
 		}
 		
 		public String getTheNewlyCode(){
-			return code[code.length-1];
+			return Code[Code.length-1];
+			
+		}
+		public String[] getNumberOfTimesSaved(){
+			return NumberOfTimesSaved;
+			
+		}
+		public String[] getSavetime(){
+			return Savetime;
+			
+		}
+		public String getTheCodeFromNumberOfTimesSaved(String numberOfTimesSaved){
+			System.out.println("numberOfTimesSaved:"+numberOfTimesSaved);
+			for(int i = 0;i<NumberOfTimesSaved.length;i++){
+				System.out.println("NumberOfTimesSaved[]"+i+":"+NumberOfTimesSaved[i]);
+				if(NumberOfTimesSaved[i].equals(numberOfTimesSaved)){
+					return Code[i];
+				}
+			}
+			return "code not found";
 			
 		}
 		
-		
 	}
-	
-	
 	
 	public void openFile(String fileTotalName){
 	
 		CodeAggregate file = processingReadFile(fileTotalName) ;
 		
-		MyTextArea newOpen = new MyTextArea(fileTotalName);
-		newOpen.getJTextArea().setText(file.getTheNewlyCode());
+		CodeTextArea newOpen = new CodeTextArea(fileTotalName,file);
 		
-		addNewTextArea(fileTotalName, newOpen);
+		newOpen.setText(file.getTheNewlyCode());
+		
+		addTextAreaToTabbedPanel(fileTotalName, newOpen);
 //		tabbedPanel.add( fileTotalName, newOpen);
 	}
 	public String creatnewFile(String filename,String fileType){
-		
-		
-		
-		
+
 		if(filename.length()<3||filename.length()>15){
 			return "文件长度必须在3-15之间!";
 		}
 
-	
 		Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
 		Matcher matcher = pattern.matcher(username);
 		if(!matcher.matches()){
 			return "文件名含有非法字符!";
 		}
-		
-		
 
-		
-		
 		if(getFileList().contains(filename+fileType)){
 			//弹出提示已经有了这个文件
 			
@@ -475,22 +541,100 @@ public class MainWindow {
 				e.printStackTrace();
 			}
 			//本地创建
-			
-			
-			tabbedPanel.add( filename+fileType, new MyTextArea(filename+fileType));
-			
-			
-			
-			
+
+			openFile(filename+fileType);
+
 			return "成功创建!";
 		}
 		
 	}
 	//得到总的文件目录
+	private void menuRun(ActionEvent e){
+		String param = inputArea.getText();
+			
+			
+		int i=	tabbedPanel.getSelectedIndex();
+		if(i>-1){
+			CodeTextArea text =((CodeTextArea)tabbedPanel.getComponentAt(i));
 
-	
-	
+//				
+			Thread t = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						System.out.println("!!!!!!!!!!!!!!");
+						outputArea.getJTextArea().setText(RemoteHelper.getInstance().getRunservice().run(text.getText(), param,text.getFileTotalName()));
+					} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+			t.start();
+		}else{
+			outputArea.getJTextArea().setText("没有文件可被执行!");
+		}
+	}
+	private void menuNewFile(ActionEvent e){
+		NewFileDialog newfile = new NewFileDialog(username, MainWindow.this);
+		newfile.setLocationRelativeTo(MainWindow.this.tabbedPanel);
+		newfile.setSize(300, 100);
+		newfile.setVisible(true);
+	}
+	private void menuOpenFile(ActionEvent e){
+//		textArea.setText("Open");
+//		 ArrayList<String> list = MainFrame.this.getFileList();
 		
+		
+		
+		
+		FileChooser fc= new FileChooser(username, MainWindow.this);
+		fc.setLocationRelativeTo(MainWindow.this.tabbedPanel);
+//		fc.setSize(200,200);
+		fc.setVisible(true);
+	}
+	private void menuOneStepRun(ActionEvent e){
+		
+		
+		
+	}
+	private void menuOpenHistoryVersion(ActionEvent e){
+		if(tabbedPanel.getSelectedIndex()!=-1){
+			
+			
+			HistoryVersionChooser historyChooser = new HistoryVersionChooser(MainWindow.this, 
+					((CodeTextArea)tabbedPanel.getComponentAt(tabbedPanel.getSelectedIndex())).getCodeAggregate().getFileTotalName());
+			historyChooser.setLocationRelativeTo(MainWindow.this.tabbedPanel);
+			historyChooser.setVisible(true);
+			
+			}else{
+				new JOptionPane().showMessageDialog(MainWindow.this.frame, "请至少选择一个文件!");
+			}
+	}
+	private void menuUndo(ActionEvent e){
+	if(tabbedPanel.getSelectedIndex()!=-1){
+		((CodeTextArea)tabbedPanel.getComponentAt(tabbedPanel.getSelectedIndex())).undo();
+			
+		
+			
+			}
+	}
+		
+		
+	
+	private void menuRedo(ActionEvent e){
+		if(tabbedPanel.getSelectedIndex()!=-1){
+			((CodeTextArea)tabbedPanel.getComponentAt(tabbedPanel.getSelectedIndex())).redo();
+				
+			
+				
+				}
+		
+		
+	}
+	
 	public ArrayList<String> getFileList(){
 		ArrayList<String> fileList =new ArrayList<>();
 		String fileNameString="";
@@ -502,21 +646,14 @@ public class MainWindow {
 			e.printStackTrace();
 			
 		}
-		
 
-		
-		
-		if(fileNameString.equals("")){
-			
+		if(fileNameString.equals("")){	
 		}else{
 			String[] fileNameArgs = fileNameString.split(" ");
 			for(int i=0;i<fileNameArgs.length;i++){
 				fileList.add(fileNameArgs[i]);
 			}
-			
-			
-			
-			
+	
 		}
 		
 		return fileList;
@@ -539,64 +676,40 @@ public class MainWindow {
 		}
 	}
 	class MenuItemActionListener implements ActionListener {
-		/**
-		 * 子菜单响应事件
-		 */
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
 			
 		
 			if(cmd.equals("New")){
-				NewFileDialog newfile = new NewFileDialog(username, MainWindow.this);
-				newfile.setLocationRelativeTo(MainWindow.this.tabbedPanel);
-				newfile.setSize(300, 100);
-				newfile.setVisible(true);
-				
+
+				MainWindow.this.menuNewFile(e);
 				
 			}else if (cmd.equals("Open")) {
-//				textArea.setText("Open");
-//				 ArrayList<String> list = MainFrame.this.getFileList();
-				
-				
-				
-				
-				FileChooser fc= new FileChooser(username, MainWindow.this);
-				fc.setLocationRelativeTo(MainWindow.this.tabbedPanel);
-//				fc.setSize(200,200);
-				fc.setVisible(true);
-				
-				
-				
-				
-			}  else if (cmd.equals("Run")) {
-				
-				
-				
-				int i=	tabbedPanel.getSelectedIndex();
-				if(i>-1){
-					JTextArea text =((MyTextArea)tabbedPanel.getComponentAt(i)).getJTextArea();
+			
+				MainWindow.this.menuOpenFile(e);
 
-//					
-					try {
-						outputArea.getJTextArea().setText(RemoteHelper.getInstance().getRunservice().run(text.getText(), "1 2"));
-					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}else{
-					outputArea.getJTextArea().setText("没有文件可被执行!");
-				}
+			}  else if(cmd.equals("OneStep")){
+				
+				MainWindow.this.menuOneStepRun(e);
+				
+			}else if (cmd.equals("Run")) {
+				 
+				 MainWindow.this.menuRun(e);
+				 
 			}else if(cmd.equals("Undo")){
+				
+				MainWindow.this.menuUndo(e);
 				
 			}else if(cmd.equals("Redo")){
 				
+				MainWindow.this.menuRedo(e);
+				
 			}else if(cmd.equals("HistoryVersion")){
-				
-				
-				
-				
-				
+			
+				MainWindow.this.menuOpenHistoryVersion(e);
+			
 			}
 		}
 	}
@@ -608,10 +721,10 @@ public class MainWindow {
 			int i=	tabbedPanel.getSelectedIndex();
 			
 			if(i>-1){
-				MyTextArea text =(MyTextArea)tabbedPanel.getComponentAt(i);
+				CodeTextArea text =(CodeTextArea)tabbedPanel.getComponentAt(i);
 				//非法字符值得商榷
 				try {
-					RemoteHelper.getInstance().getIOService().writeFile(text.getJTextArea().getText(), username, tabbedPanel.getTitleAt(i));
+					RemoteHelper.getInstance().getIOService().writeFile(text.getText(), username, tabbedPanel.getTitleAt(i));
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

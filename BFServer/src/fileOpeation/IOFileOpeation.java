@@ -174,16 +174,14 @@ public class IOFileOpeation {
 	
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		
-//		Scanner s=new Scanner(System.in);
-//		String t=s.nextLine();
-//		t=t+String.format("\n1233\n213");
-//		System.out.println(t);
-//		IOFileOpeation.writeFile(t, "726752766", "123.bf");
-		writeFile("asdzxcszc", "x1234567", "123.bf");
-		
+
+		File f= new File("D:/file.txt");
+		if(!f.exists()){
+			f.createNewFile();
+		}
 		
 	}
 	

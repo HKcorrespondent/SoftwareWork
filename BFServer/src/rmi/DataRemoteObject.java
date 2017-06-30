@@ -65,14 +65,19 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 	}
 
 	@Override
-	public String run(String code, String param) throws RemoteException {
+	public String run(String code, String param, String codeName) throws RemoteException {
 		// TODO Auto-generated method stub
-		return runService.run(code, param);
+		return runService.run(code, param,  codeName);
 	}
 	@Override
 	public String[] getExecutableFileType() throws RemoteException {
 		// TODO Auto-generated method stub
 		return configurationService.getExecutableFileType();
+	}
+	@Override
+	public String oneStepRun(String code, String param, String codeName, String username) throws RemoteException {
+		// TODO Auto-generated method stub
+		return runService.oneStepRun(code, param, codeName, username);
 	}
 	
 

@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 
 public class FileChooser extends  JDialog  implements ActionListener {
 
-	MainWindow mainWindow =null;
-	JComboBox fileNameComboBox = null;
+	private MainWindow mainWindow =null;
+	private JComboBox fileNameComboBox = null;
 
 	    
 		public FileChooser(String username,MainWindow frame){  
