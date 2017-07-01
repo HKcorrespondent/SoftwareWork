@@ -18,8 +18,8 @@ import javafx.beans.value.WritableBooleanValue;
 
 public class IOFileOpeation {
 	private static String dataAddress = UserFileOperation.dataAddress;
-	private final static String splitFileSymbol = "_";
-	private final static String splitFileInformation = "@";
+	public final static String splitFileSymbol = "_";
+	public final static String splitFileInformation = "@";
 	private static int HistoryVersionNumber = 3;
 	public static boolean  writeFile(String codeGetIn, String userId, String fileName){
 		File file1 = new  File(dataAddress+"\\"+userId+"\\"+fileName);

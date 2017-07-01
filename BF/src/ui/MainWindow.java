@@ -53,30 +53,45 @@ public class MainWindow {
 	private String username;
 	private JFrame frame;
 	private JTabbedPane tabbedPanel;
-	
-//	private ArrayList<String> fileList =null;
+	private String splitFileSymbol ;
+	private String splitFileInformation ;
+	private final int JTabbedPaneNotSelected = -1 ;
 	private String[] fileTypeArgs = null;
+	
 	public JFrame getJFrame(){
 		return frame;
 	}
+	
 	public  String[] getTotalFileType(){
 		return fileTypeArgs;
 	}
-	public void ConfigurationInit(){
+	
+	public void initConfiguration(){
+		frame.setSize(800, 600);
+		frame.setLocation(400, 200);
+		frame.setVisible(true);
 		try {
 			fileTypeArgs = RemoteHelper.getInstance().getConfiguratioSservice().getExecutableFileType();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		try {
+			splitFileSymbol = RemoteHelper.getInstance().getConfiguratioSservice().getSplitFileSymbol();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			splitFileInformation = RemoteHelper.getInstance().getConfiguratioSservice().getSplitFileInformation();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	} 
-//	public static void main(String[] s){
-//		//获取系统中可用的字体的名字  
-//	
-//
-//		new MainWindow("x123456");
-//		
-//	}
+
 	class CloseButton extends JButton{
 		int countOnTheTab = 0;
 		public CloseButton(String s,int count){
@@ -102,9 +117,9 @@ public class MainWindow {
 	}
 	
 	public void addTextAreaToTabbedPanel(String title,CodeTextArea textArea){
-//		System.out.println("title: "+title);
+
 		for(int i=0;i<tabbedPanel.getTabCount();i++){
-//			System.out.println("tabbedPanel.getTitleAt(i): "+tabbedPanel.getTitleAt(i));
+
 			if(tabbedPanel.getTitleAt(i).equals(title)){
 				tabbedPanel.setComponentAt(i, textArea);
 				return ;
@@ -139,10 +154,7 @@ public class MainWindow {
 		
 		gc.fill=GridBagConstraints.BOTH;
 		
-//		frame.add(tabbedPanel, BorderLayout.NORTH);
-//		s.gridwidth=1; 
-//		s.weightx = 0; 
-//		s.weighty=0; 
+
 		
 		gc.gridx=1;
 		gc.gridy=1;
@@ -174,99 +186,8 @@ public class MainWindow {
 		tabbedPanel.setTabComponentAt(count, tabPanel);
 		
 	}
-	public MainWindow(String username) {
-		frame = new JFrame("Hello! "+username+"-BF Client");
-		setUIFont();
-		this.username=username;
-		
-		// 创建窗体
-		
-		
-		
-		setFrameLookAndFeel();
-		ConfigurationInit();
-		initMenu();
-		
-		tabbedPanel = new JTabbedPane();
-		
-		
-		outputArea = new InAndOutPutTextArea("outputArea");
-		outputArea.getJTextArea().setLineWrap(true);
-		outputArea.getJTextArea().setText("output");
-		outputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
-		inputArea = new InAndOutPutTextArea("outputArea");
-		inputArea.getJTextArea().setLineWrap(true);
-		inputArea.getJTextArea().setText("input");
-		inputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
-		
-		
-//		MyTextArea  textArea = new MyTextArea("new.bf");
-//		textArea.getJTextArea().setLineWrap(true);
-//		tabbedPanel.add("new.bf", textArea);
-////		tabbedPanel.setComponentAt();
-//		
-//		tabbedPanel.setTabComponentAt(0, new JButton("X"));
-		frame.add(tabbedPanel);
-		frame.add(inputArea);
-		frame.add(outputArea);
-//		textArea.setMargin(new Insets(10, 10, 10, 10));
-//		textArea.setBackground(Color.LIGHT_GRAY);
-//		JTextArea  textArea1 = new JTextArea();
-//		textArea1.setMargin(new Insets(10, 10, 10, 10));
-//		textArea1.setBackground(Color.LIGHT_GRAY);
-		
-		
-//		frame.add(textArea, BorderLayout.CENTER);
-//		tabbedPanel.addTab("panel2", textArea1);
-//		tabbedPanel.addTab("panel1", textArea);
-		
-		GridBagLayout gl =new GridBagLayout();
-		
-		GridBagConstraints gc= new GridBagConstraints();
-		
-		gc.fill=GridBagConstraints.BOTH;
-		
-//		frame.add(tabbedPanel, BorderLayout.NORTH);
-//		s.gridwidth=1; 
-//		s.weightx = 0; 
-//		s.weighty=0; 
-		gc.ipadx=0;
-		gc.ipady=0;
-		gc.gridx=0;
-		gc.gridy=0;
-		gc.gridwidth=2;
-		gc.gridheight=2;
-		gc.weightx=1;
-		gc.weighty=1;
-		
-		gl.setConstraints(tabbedPanel, gc);
-		gc.fill=GridBagConstraints.BOTH;
-		gc.ipadx=0;
-		gc.ipady=0;
-		gc.gridx=0;
-		gc.gridy=2;
-		gc.gridwidth=1;
-		gc.gridheight=1;
-		gc.weightx=1;
-		gc.weighty=1;
-		
-		gl.setConstraints(inputArea, gc);
-		gc.fill=GridBagConstraints.BOTH;
-		gc.ipadx=0;
-		gc.ipady=0;
-		gc.gridx=1;
-		gc.gridy=2;
-		gc.gridwidth=1;
-		gc.gridheight=1;
-		gc.weightx=1;
-		gc.weighty=1;
-		
-		gl.setConstraints(outputArea, gc);
-		frame.setLayout(gl);
-//		frame.add(outputLabel, BorderLayout.EAST);
-//		frame.add(inputLabel, BorderLayout.WEST);
-	
-		frame.addWindowListener(new WindowListener() {
+	private void setWindowCloseAction(){
+			frame.addWindowListener(new WindowListener() {
 			
 			@Override
 			public void windowOpened(WindowEvent arg0) {
@@ -319,10 +240,78 @@ public class MainWindow {
 				
 			}
 		});
-		frame.setSize(800, 600);
-//		setSize(800, 600);
-		frame.setLocation(400, 200);
-		frame.setVisible(true);
+	}
+	
+	private void initComponent(){
+		tabbedPanel = new JTabbedPane();
+		
+		
+		outputArea = new InAndOutPutTextArea("outputArea");
+		outputArea.getJTextArea().setLineWrap(true);
+		outputArea.getJTextArea().setText("output");
+		outputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
+		inputArea = new InAndOutPutTextArea("outputArea");
+		inputArea.getJTextArea().setLineWrap(true);
+		inputArea.getJTextArea().setText("input");
+		inputArea.setBorder(BorderFactory.createLineBorder(Color.black,1));
+		
+		
+
+		frame.add(tabbedPanel);
+		frame.add(inputArea);
+		frame.add(outputArea);
+
+		
+		GridBagLayout gl =new GridBagLayout();
+		
+		GridBagConstraints gc= new GridBagConstraints();
+		
+		gc.fill=GridBagConstraints.BOTH;
+		
+
+		gc.ipadx=0;
+		gc.ipady=0;
+		gc.gridx=0;
+		gc.gridy=0;
+		gc.gridwidth=2;
+		gc.gridheight=2;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(tabbedPanel, gc);
+		gc.fill=GridBagConstraints.BOTH;
+		gc.ipadx=0;
+		gc.ipady=0;
+		gc.gridx=0;
+		gc.gridy=2;
+		gc.gridwidth=1;
+		gc.gridheight=1;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(inputArea, gc);
+		gc.fill=GridBagConstraints.BOTH;
+		gc.ipadx=0;
+		gc.ipady=0;
+		gc.gridx=1;
+		gc.gridy=2;
+		gc.gridwidth=1;
+		gc.gridheight=1;
+		gc.weightx=1;
+		gc.weighty=1;
+		
+		gl.setConstraints(outputArea, gc);
+		frame.setLayout(gl);
+	}
+	public MainWindow(String username) {
+		this.frame = new JFrame("Hello! "+username+"-BF Client");
+		this.username=username;
+		setUIFont();
+		setFrameLookAndFeel();
+		initConfiguration();
+		initMenu();
+		initComponent();
+		setWindowCloseAction();
 	}
 	
 	private void initMenu(){
@@ -353,7 +342,7 @@ public class MainWindow {
 			menuBar.add(fileMenu);
 		}
 		{
-			JMenu editMenu = new JMenu("edit");
+			JMenu editMenu = new JMenu("Edit");
 			
 			
 			JMenuItem undoMenuItem = new JMenuItem("Undo");
@@ -377,7 +366,7 @@ public class MainWindow {
 			menuBar.add(editMenu);
 		}
 		{
-			JMenu runMenu = new JMenu("edit");
+			JMenu runMenu = new JMenu("Run");
 
 			
 			JMenuItem runMenuItem = new JMenuItem("Run");
@@ -390,18 +379,14 @@ public class MainWindow {
 			oneStepRunMenuItem.setAccelerator(KeyStroke.getKeyStroke("F6"));
 			runMenu.add(oneStepRunMenuItem);
 
-		
+			JMenuItem oneStepRunStopMenuItem = new JMenuItem("OneStepStop");
+			oneStepRunStopMenuItem.addActionListener(new MenuItemActionListener());
+			oneStepRunStopMenuItem.setAccelerator(KeyStroke.getKeyStroke("F7"));
+			runMenu.add(oneStepRunStopMenuItem);
+			
 			menuBar.add(runMenu);
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		frame.setJMenuBar(menuBar);
 	}
 	private void setFrameLookAndFeel(){
@@ -424,13 +409,11 @@ public class MainWindow {
 		CodeTextArea newOpen = new CodeTextArea(filename+fileType,file);
 		newOpen.setText(file.getTheNewlyCode());
 		addTextAreaToTabbedPanel(filename+fileType, newOpen);
-//		tabbedPanel.add( filename+fileType, newOpen);
-		
+
 	}
 	public  CodeAggregate processingReadFile(String fileTotalName){
 		String content = null;
 		try {
-//			System.out.println(username+"!!!!!!!"+ fileTotalName);
 			 content = RemoteHelper.getInstance().getIOService().readFile(username, fileTotalName);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -448,27 +431,23 @@ public class MainWindow {
 		private String[] Savetime;
 		private String[] Code;
 		private String fileTotalName ;
-		public String getFileTotalName(){
-			return fileTotalName;
-			
-		}
-		CodeAggregate(String content,String fileTotalName){
+
+		/*	创建一个文件集合体的时接受从服务器传来的一个String对其解码后可以分析出历次保存的内容及保存时间及保存次数
+		 * 	由此便于版本操作
+		 * */
+		CodeAggregate(String totalFileContent,String fileTotalName){
 			this.fileTotalName =fileTotalName;
-			String[] allInformation = content.split("_");
-		
-			
-			
-			String[] processedfile = content.split("@");
-			 
+			String[] allInformation = totalFileContent.split(splitFileSymbol);
+
 			NumberOfTimesSaved 	= new String[allInformation.length];
 			Savetime			= new String[allInformation.length];
 			Code				= new String[allInformation.length];
 			
 			for(int i=0;i<allInformation.length;i++){
-				allInformation[i] = allInformation[i].replaceAll("_", "")+" ";
+				allInformation[i] = allInformation[i].replaceAll(splitFileSymbol, "")+" ";
 //				System.out.println("allInformation"+i+":"+ allInformation[i]);
 				
-				String[] oneFileInformatin = allInformation[i].split("@");
+				String[] oneFileInformatin = allInformation[i].split(splitFileInformation);
 				if(oneFileInformatin[2].equals(" ")){
 					oneFileInformatin[2]="";
 				}
@@ -478,7 +457,10 @@ public class MainWindow {
 			}
 			
 		}
-		
+		public String getFileTotalName(){
+			return fileTotalName;
+			
+		}
 		public String getTheNewlyCode(){
 			return Code[Code.length-1];
 			
@@ -491,7 +473,7 @@ public class MainWindow {
 			return Savetime;
 			
 		}
-		public String getTheCodeFromNumberOfTimesSaved(String numberOfTimesSaved){
+		public String getCodeFromNumberOfTimesSaved(String numberOfTimesSaved){
 			System.out.println("numberOfTimesSaved:"+numberOfTimesSaved);
 			for(int i = 0;i<NumberOfTimesSaved.length;i++){
 				System.out.println("NumberOfTimesSaved[]"+i+":"+NumberOfTimesSaved[i]);
@@ -500,7 +482,6 @@ public class MainWindow {
 				}
 			}
 			return "code not found";
-			
 		}
 		
 	}
@@ -514,7 +495,7 @@ public class MainWindow {
 		newOpen.setText(file.getTheNewlyCode());
 		
 		addTextAreaToTabbedPanel(fileTotalName, newOpen);
-//		tabbedPanel.add( fileTotalName, newOpen);
+
 	}
 	public String creatnewFile(String filename,String fileType){
 
@@ -551,10 +532,9 @@ public class MainWindow {
 	//得到总的文件目录
 	private void menuRun(ActionEvent e){
 		String param = inputArea.getText();
-			
-			
+
 		int i=	tabbedPanel.getSelectedIndex();
-		if(i>-1){
+		if(i!=JTabbedPaneNotSelected){
 			CodeTextArea text =((CodeTextArea)tabbedPanel.getComponentAt(i));
 
 //				
@@ -583,25 +563,91 @@ public class MainWindow {
 		newfile.setSize(300, 100);
 		newfile.setVisible(true);
 	}
+	private void menuQuit(ActionEvent e){
+		try {
+			RemoteHelper.getInstance().getUserService().logout(username);
+		} catch (RemoteException s) {
+			// TODO Auto-generated catch block
+			s.printStackTrace();
+		}
+		System.out.println("OK!");
+		MainWindow.this.getJFrame().dispose();
+		System.exit(0);
+	}
 	private void menuOpenFile(ActionEvent e){
-//		textArea.setText("Open");
-//		 ArrayList<String> list = MainFrame.this.getFileList();
-		
-		
-		
-		
+
 		FileChooser fc= new FileChooser(username, MainWindow.this);
 		fc.setLocationRelativeTo(MainWindow.this.tabbedPanel);
-//		fc.setSize(200,200);
 		fc.setVisible(true);
 	}
 	private void menuOneStepRun(ActionEvent e){
+		String param = inputArea.getText();
+
+		int i=	tabbedPanel.getSelectedIndex();
+		if(i!=JTabbedPaneNotSelected){
+			CodeTextArea text =((CodeTextArea)tabbedPanel.getComponentAt(i));
+
+//				
+			Thread t = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					os( text,param);
+				}
+			});
+			t.start();
+		}else{
+			outputArea.getJTextArea().setText("没有文件可被执行!");
+		}
+		
+		
+	}
+	
+	public synchronized void os(CodeTextArea text,String param){
+		try {
+			System.out.println("!!!!!!!!!!!!!!");
+			outputArea.getJTextArea().setText(RemoteHelper.getInstance().
+					getRunservice().oneStepRun(text.getText(), param,text.getFileTotalName(),username));
+		} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	private void menuOneStepRunStop(ActionEvent e){
+		int i=	tabbedPanel.getSelectedIndex();
+		if(i!=JTabbedPaneNotSelected){
+			CodeTextArea text =((CodeTextArea)tabbedPanel.getComponentAt(i));
+
+//				
+			Thread t = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+					
+						outputArea.getJTextArea().setText(RemoteHelper.getInstance().
+								getRunservice().oneStepRunClear(text.getFileTotalName(), username));
+						
+						
+					} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+			t.start();
+		}
 		
 		
 		
 	}
+
+	
 	private void menuOpenHistoryVersion(ActionEvent e){
-		if(tabbedPanel.getSelectedIndex()!=-1){
+		if(tabbedPanel.getSelectedIndex()!=JTabbedPaneNotSelected){
 			
 			
 			HistoryVersionChooser historyChooser = new HistoryVersionChooser(MainWindow.this, 
@@ -614,22 +660,18 @@ public class MainWindow {
 			}
 	}
 	private void menuUndo(ActionEvent e){
-	if(tabbedPanel.getSelectedIndex()!=-1){
+	if(tabbedPanel.getSelectedIndex()!=JTabbedPaneNotSelected){
 		((CodeTextArea)tabbedPanel.getComponentAt(tabbedPanel.getSelectedIndex())).undo();
-			
-		
-			
+
 			}
 	}
 		
 		
 	
 	private void menuRedo(ActionEvent e){
-		if(tabbedPanel.getSelectedIndex()!=-1){
+		if(tabbedPanel.getSelectedIndex()!=JTabbedPaneNotSelected){
 			((CodeTextArea)tabbedPanel.getComponentAt(tabbedPanel.getSelectedIndex())).redo();
-				
-			
-				
+
 				}
 		
 		
@@ -681,36 +723,38 @@ public class MainWindow {
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
 			
-		
-			if(cmd.equals("New")){
-
+			switch (cmd){
+			case "New": 
 				MainWindow.this.menuNewFile(e);
-				
-			}else if (cmd.equals("Open")) {
-			
+				break;
+			case "Open": 
 				MainWindow.this.menuOpenFile(e);
-
-			}  else if(cmd.equals("OneStep")){
-				
-				MainWindow.this.menuOneStepRun(e);
-				
-			}else if (cmd.equals("Run")) {
-				 
-				 MainWindow.this.menuRun(e);
-				 
-			}else if(cmd.equals("Undo")){
-				
+				break;	
+			case "Quit": 
+				MainWindow.this.menuQuit(e);
+				break;	
+			case "Undo": 
 				MainWindow.this.menuUndo(e);
-				
-			}else if(cmd.equals("Redo")){
-				
+				break;	
+			case "Redo": 
 				MainWindow.this.menuRedo(e);
-				
-			}else if(cmd.equals("HistoryVersion")){
-			
+				break;	
+			case "HistoryVersion": 
 				MainWindow.this.menuOpenHistoryVersion(e);
-			
+				break;	
+			case "Run": 
+				MainWindow.this.menuRun(e);
+				break;	
+			case "OneStep": 
+				MainWindow.this.menuOneStepRun(e);
+				break;	
+			case "OneStepStop":
+				MainWindow.this.menuOneStepRunStop(e);
+				break;	
 			}
+			
+
+			
 		}
 	}
 
@@ -720,7 +764,7 @@ public class MainWindow {
 		public void actionPerformed(ActionEvent e) {
 			int i=	tabbedPanel.getSelectedIndex();
 			
-			if(i>-1){
+			if(i!=JTabbedPaneNotSelected){
 				CodeTextArea text =(CodeTextArea)tabbedPanel.getComponentAt(i);
 				//非法字符值得商榷
 				try {
@@ -736,16 +780,11 @@ public class MainWindow {
 			
 			
 			
-//			String code = textArea.getText();
-//			try {
-//				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
-//			} catch (RemoteException e1) {
-//				e1.printStackTrace();
-//			}
+
 		}
 
 	}
-	//做的不好
+
 	
 
 }

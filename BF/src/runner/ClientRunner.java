@@ -36,12 +36,12 @@ public class ClientRunner {
 	private void initGUI() {
 		EventQueue.invokeLater(new Runnable()
 		{
-		public void run()
-		{
-			new LoginFrame();
-
-			
-		}
+			public void run()
+			{
+				new LoginFrame();
+	
+				
+			}
 		});
 		
 		

@@ -4,6 +4,8 @@ package serviceImpl;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.text.DefaultCaret;
 
@@ -41,9 +43,9 @@ public class ExecuteServiceImpl implements ExecuteService {
 		private final char loopFront = '[';
 		private final char loopback = ']';
 		
-		int CodePtr =0;
+		int codePtr =0;
 		HashMap<Integer, Integer> loopMark= new HashMap<>();
-		ArrayList<Character> stack = new ArrayList<>();
+		ArrayList<Integer> stack = new ArrayList<>();
 		int stackPtr =0;
 		String param ="";
 		String code = "";
@@ -76,16 +78,41 @@ public class ExecuteServiceImpl implements ExecuteService {
 			
 		}
 		public String run(){
-			while(CodePtr<code.length()){
-				stepForRun(code.charAt(CodePtr));
+			while(codePtr<code.length()){
+				stepForRun(code.charAt(codePtr));
 				
 			}
 			
-			
+		
 			
 			
 			
 			return outString;
+			
+		}
+//		ArrayList<Character> stack = new ArrayList<>();
+//		int stackPtr =0;
+//		String param ="";
+//		String code = "";
+//		int paramPtr = 0;
+//		String outString ="";
+		private final static String  newline  = "\n";
+		public String oneStepRun(){
+			if(codePtr<code.length()){
+				stepForRun(code.charAt(codePtr));
+			}
+			String stackString ="栈内容:"+ stack.toString();
+			String stackPtrString = "当前运行到栈位置:"+(stackPtr+1);
+			String codePtrString = "当前运行到代码位置:"+ (codePtr+1);
+			String outString ="目前输出:"+ this.outString;
+			String paramPtrString = "运行到参数位置:"+(paramPtr+1);
+			
+			
+			
+			
+			return outString+newline+stackPtrString+newline+stackString
+					+newline+codePtrString+newline+paramPtrString;
+			
 			
 		}
 		private void stepForRun(char c){
@@ -94,51 +121,51 @@ public class ExecuteServiceImpl implements ExecuteService {
 			switch (c){
 			case stackPtrAdd : 
 				stackPtr++;
-				CodePtr++;
+				codePtr++;
 				break;
 			case stackPtrSub : 
 				stackPtr--;
-				CodePtr++;
+				codePtr++;
 				break;
 			case stackAdd : 
 				if(stack.size()-1<stackPtr){
-					stack.add(stackPtr, (char)(1));
+					stack.add(stackPtr, (1));
 					
 				}else{
-					stack.set(stackPtr, (char)(stack.get(stackPtr)+1));
+					stack.set(stackPtr, (stack.get(stackPtr)+1));
 
 				}
-				CodePtr++;
+				codePtr++;
 				break;
 			case stackSub : 
 				if(stack.size()-1<stackPtr){
-					stack.add(stackPtr, (char)(0));
+					stack.add(stackPtr, (0));
 				}else{
-					stack.set(stackPtr, (char) (stack.get(stackPtr)-1));
+					stack.set(stackPtr,  (stack.get(stackPtr)-1));
 				}
-				CodePtr++;
+				codePtr++;
 				break;
 			case output : 
-				outString=outString+(char)stack.get(stackPtr);
+				outString=outString+(char)((int)stack.get(stackPtr));
 //				System.out.println("stackPtr:"+(int)stack.get(stackPtr));
 //				System.out.println((int)'7');
-				CodePtr++;
+				codePtr++;
 				break;
 			case input : 
 				if(stack.size()<=stackPtr){
 					
-					stack.add(stackPtr, (char)param.charAt(paramPtr));
+					stack.add(stackPtr, (int)param.charAt(paramPtr));
 //				System.out.println("stackPtr:"+(int)stack.get(stackPtr));
 				}else{
 					
-					stack.set(stackPtr, (char)param.charAt(paramPtr));
+					stack.set(stackPtr, (int)param.charAt(paramPtr));
 				}
 				paramPtr++;
-				CodePtr++;
+				codePtr++;
 				
 				break;
 			case loopFront : 
-				CodePtr++;
+				codePtr++;
 				break;
 			case loopback : 
 			
@@ -148,13 +175,13 @@ public class ExecuteServiceImpl implements ExecuteService {
 ////					System.out.println("~!!!!!!!!"+(int)stack.get(i));
 //					}
 ////					System.out.println();
-					CodePtr++;
+					codePtr++;
 				}else{
-					CodePtr=loopMark.get((Integer)CodePtr);
+					codePtr=loopMark.get((Integer)codePtr);
 				}
 				break;
 			default :
-				CodePtr++;
+				codePtr++;
 			}
 			
 				
@@ -173,17 +200,9 @@ public class ExecuteServiceImpl implements ExecuteService {
 	
 	
 	public static void main(String[] args){
-		//                                           31      	   44
-		String code = ",>,,>++++++++[<------<------>>-]<<[>[>+>+<<-]>>[<<+>>-]<<<-]>>>++++++[<++++++++>-],<.>.";
-		String param = "4+3 ";
-//		ExecuteServiceImpl exe = new ExecuteServiceImpl();
-//		try {
-//			System.out.println(exe.execute(code,param));
-//		} catch (RemoteException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		ExecutableFileClass os = new ExecutableFileClass(code, param);
-		System.out.println(os.run());
+		 
+				
+			      
+
 	}
 }

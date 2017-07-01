@@ -1,6 +1,7 @@
 package serviceImpl;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -10,22 +11,26 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+
+
 import service.RunService;
 import serviceImpl.ExecuteServiceImpl.ExecutableFileClass;
 
 public class RunServiceImpl implements RunService{
+	private static class Ook{
+		private static final String stackPtrAddReplace = "Ook.Ook?";
+		private static final String stackPtrSubReplace = "Ook?Ook.";
+		private static final String stackAddReplace = "Ook.Ook.";
+		private static final String stackSubReplace = "Ook!Ook!";
+		private static final String outputReplace = "Ook!Ook.";
+		private static final String inputReplace = "Ook.Ook!";
+		private static final String loopFrontReplace = "Ook!Ook?";
+		private static final String loopbackReplace = "Ook?Ook!";
+		static String[] replacement = {stackPtrAddReplace,stackPtrSubReplace,stackAddReplace
+				,stackSubReplace,outputReplace,inputReplace,loopFrontReplace,loopbackReplace};
+	}
 	
 	
-	private final String stackPtrAddReplace = "Ook.Ook?";
-	private final String stackPtrSubReplace = "Ook?Ook.";
-	private final String stackAddReplace = "Ook.Ook.";
-	private final String stackSubReplace = "Ook!Ook!";
-	private final String outputReplace = "Ook!Ook.";
-	private final String inputReplace = "Ook.Ook!";
-	private final String loopFrontReplace = "Ook!Ook?";
-	private final String loopbackReplace = "Ook?Ook!";
-	String[] replacement = {stackPtrAddReplace,stackPtrSubReplace,stackAddReplace
-			,stackSubReplace,outputReplace,inputReplace,loopFrontReplace,loopbackReplace};
 	
 	
 	private final String stackPtrAdd = ">";
@@ -42,6 +47,7 @@ public class RunServiceImpl implements RunService{
 	
 	
 	private static final String RunError = "运行错误!";
+	private static final String RunTimesOut = "运行超时!";
 	@Override
 	public String oneStepRun(String code, String param, String codeName, String username) throws RemoteException {
 		// TODO Auto-generated method stub
@@ -51,10 +57,10 @@ public class RunServiceImpl implements RunService{
 				@Override
 				public String call() throws Exception {
 					// TODO Auto-generated method stub
+					ExecutableFileClass run  = getExecutableFileClassRunFromUsername(code, param, codeName, username);
+					return run.oneStepRun();
 					
 					
-					
-					return "江来你是要负泽任的!";
 					}
 		});  
 		executor.execute(future);  
@@ -69,7 +75,7 @@ public class RunServiceImpl implements RunService{
 				executor.shutdown();  
 			} catch (TimeoutException e) {  
 				executor.shutdown();  
-
+				return RunTimesOut;
 				
 				
 			} finally {  
@@ -117,7 +123,7 @@ public class RunServiceImpl implements RunService{
 			executor.shutdown();  
 		} catch (TimeoutException e) {  
 			executor.shutdown();  
-
+			return RunTimesOut;
 			
 			
 		} finally {  
@@ -156,8 +162,8 @@ public class RunServiceImpl implements RunService{
 		
 		for(int i=0;i<code.length();i+=8){
 			String c = code.substring(i, i+8);
-			for(int j=0;j<replacement.length;j++){
-				if(c.equals(replacement[j])){
+			for(int j=0;j<Ook.replacement.length;j++){
+				if(c.equals(Ook.replacement[j])){
 					realCode=realCode+bf[j];
 				}
 			}
@@ -166,25 +172,29 @@ public class RunServiceImpl implements RunService{
 		
 		return os;
 	}
-	public static void main(String[] args){
-		
-		String name[] = "asdzx.bf".split("\\.");
-		 System.out.println(name[1]);
-		}
+
 	private static HashMap< String, ExecutableFileClass> user2oneStepRun = new HashMap<>();
 	
 	private ExecutableFileClass getExecutableFileClassRunFromUsername(String code, String param,String fileName,String username){
-		if(user2oneStepRun.containsKey(username)){
-			return user2oneStepRun.get(username);
+		if(user2oneStepRun.containsKey(username+"_"+fileName)){
+			return user2oneStepRun.get(username+"_"+fileName);
 		}else{
 			
 			
 			
 			
-			user2oneStepRun.put(username,creatNewExecutableFileClass(code, param, fileName));
-			return user2oneStepRun.get(username);
+			user2oneStepRun.put(username+"_"+fileName,creatNewExecutableFileClass(code, param, fileName));
+			return user2oneStepRun.get(username+"_"+fileName);
 		}
 	
+	}
+	@Override
+	public String oneStepRunClear(String codeName, String username) throws RemoteException {
+		// TODO Auto-generated method stub
+		if(user2oneStepRun.containsKey(username+"_"+codeName)){
+			user2oneStepRun.remove(username+"_"+codeName);
+		}
+		return "单步运行信息成功清除!";
 	}
 	
 	

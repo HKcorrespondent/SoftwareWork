@@ -62,7 +62,7 @@ public class HistoryVersionChooser extends JDialog implements ActionListener {
     		
     		String numberOfTimesSaved= SelectedVersion.split("\\|")[1].replace("±£´æ´ÎÊý:", "");
     		System.out.println(numberOfTimesSaved);
-    		newOpen.setText(file.getTheCodeFromNumberOfTimesSaved(numberOfTimesSaved));
+    		newOpen.setText(file.getCodeFromNumberOfTimesSaved(numberOfTimesSaved));
     		
     		mainWindow.addTextAreaToTabbedPanel(file.getFileTotalName(), newOpen);
     		

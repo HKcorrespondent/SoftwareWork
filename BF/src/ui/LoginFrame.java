@@ -35,14 +35,14 @@ public class LoginFrame extends JFrame{
 	
 	
 	public LoginFrame(){
-		initSizeAndOthers();
-	    initComnponent();
-	    setBackground(Color.red);
+		initSizeAndOtherConfiguration();
+	    initComponent();
+//	    setBackground(Color.red);
 
 	    setVisible(true);
 	}
 	
-	public void disposeTheLoginFrame(){
+	private void disposeTheLoginFrame(){
 		this.dispose();
 	}
 	public boolean login(String username, String password) throws RemoteException{
@@ -53,14 +53,14 @@ public class LoginFrame extends JFrame{
 		}
 		
 	}
-	public String signup(String username, String password) throws RemoteException{
+	private String signup(String username, String password) throws RemoteException{
 		
 		return RemoteHelper.getInstance().getUserService().signup(username, password);
 	}
 	
-	private void initSizeAndOthers(){
+	private void initSizeAndOtherConfiguration(){
 		setLayout(null);
-		setTitle("denglu jiemian");
+		setTitle("登录界面");
 		setSize(550, 320);
 		setLocation(500, 300);
 		setResizable(false);
@@ -68,7 +68,7 @@ public class LoginFrame extends JFrame{
 		
 		
 	}
-	private void initComnponent(){
+	private void initComponent(){
 		userLabel=new JLabel("用户名");
 		username=new JTextField();
 		passwordLabel=new JLabel("密码");
@@ -76,6 +76,7 @@ public class LoginFrame extends JFrame{
 		loginButton = new JButton("登录");
 		signupButton = new JButton("注册");
 		showLabel = new JLabel("输入用户名和密码,若未注册请输入后点击注册");
+		
 		Font font=new Font(Font.DIALOG_INPUT, Font.BOLD, 18);
 		
 		int x=70;
@@ -119,15 +120,10 @@ public class LoginFrame extends JFrame{
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
-			
-			
-			
-			
+
 			// TODO Auto-generated method stub
 			try {
-				
-				
+
 				if(login(username.getText(),encode(password.getPassword()))){
 					
 					String trueUsername=username.getText();
@@ -149,9 +145,7 @@ public class LoginFrame extends JFrame{
 			char c=MD5.charAt(i);
 			ret=ret+(char)('A'+c%26);
 		}
-		
-		
-		
+
 		return ret;
 		
 	}
@@ -160,11 +154,7 @@ public class LoginFrame extends JFrame{
 		MessageDigest md5 = null;
 		try {
 			md5=MessageDigest.getInstance("MD5");
-			
-			
-			
-			
-			
+
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -173,12 +163,7 @@ public class LoginFrame extends JFrame{
 		String retString = null;
 		try {
 			retString = new String(md5.digest(String.valueOf(c).getBytes()),"UTF-8");
-			
-			
-			
-			
-			
-			
+	
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -207,9 +192,7 @@ public class LoginFrame extends JFrame{
 			showLabel.setText("密码长度必须在6位到16位之间!");
 			return false;
 		}
-		
-		
-		
+
 		return true;
 		
 	}
@@ -223,9 +206,6 @@ public class LoginFrame extends JFrame{
 			// TODO Auto-generated method stub
 			boolean isLegal=judgeUsernameAndPasswordLegalOrNot(username.getText(),password.getPassword());
 
-			
-		
-			
 			if(isLegal){
 				try {
 					

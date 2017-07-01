@@ -79,6 +79,21 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 		// TODO Auto-generated method stub
 		return runService.oneStepRun(code, param, codeName, username);
 	}
+	@Override
+	public String getSplitFileSymbol() throws RemoteException {
+		// TODO Auto-generated method stub
+		return configurationService.getSplitFileSymbol();
+	}
+	@Override
+	public String getSplitFileInformation() throws RemoteException {
+		// TODO Auto-generated method stub
+		return configurationService.getSplitFileInformation();
+	}
+	@Override
+	public String oneStepRunClear(String codeName, String username) throws RemoteException {
+		// TODO Auto-generated method stub
+		return runService.oneStepRunClear(codeName, username);
+	}
 	
 
 }
